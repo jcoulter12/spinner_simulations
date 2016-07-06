@@ -4,7 +4,6 @@ import scipy.io as sio
 import os
 import math
 from sys import argv
-from tempfile import TemporaryFile
 from time import strftime
 
 #Define the parameters =================================================
@@ -27,6 +26,10 @@ dt=10**-3
 noise=2E0
 etaRes=0.01
 tauRes=time_steps/50
+
+
+script,jobNum = argv
+
 '''
 #=======================================================================
 # This creates the lattice
@@ -270,7 +273,7 @@ plt.close
 #WRITE OUTPUTS 
 #=======================================================================
 '''
-script,jobNum = argv
+MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
 print("jobNum: " + str(jobNum))
 print("omega: " + str(omega))
@@ -291,6 +294,5 @@ else:
     print("             " + "square")
 print("             " + "Force Calc: Original")
 
-#outfile = TemporaryFile()
-#np.save(outfile, MSDeta[0,:])
+np.save('MSDeta' + str(jobNum) + '.npy', MSDeta[0,:])
 #np.save(outfile, MSDtau[0,:])
