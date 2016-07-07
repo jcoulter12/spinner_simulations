@@ -13,8 +13,8 @@ lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=100
-Nspinners=10
+time_steps=10000
+Nspinners=7
 
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
@@ -24,7 +24,7 @@ Nres=30
 dt=10**-3
 noise=0
 etaRes=0.01
-tauRes=time_steps/50
+tauRes=time_steps/200
 
 script,jobNum, noise, eta = argv
 eta=float(eta)
@@ -193,16 +193,16 @@ for i in range(0,Nspinners):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time_steps-10)
     '''
+    x_path=force_calc_stub()
     #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         #eta=1
         #gamma=0
         tau=t+1
-        x_path=force_calc_stub()
         for N in range(10,time_steps-(tau)):
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
-#print("done")
+print("done")
 
 #=======================================================================
 # PLOT MSD vs delta tau
@@ -240,7 +240,7 @@ plt.close()
 #=======================================================================
 # PLOT MSD vs eta
 #=======================================================================
-'''
+
 x_vals=np.zeros((Nspinners,(int)(1/etaRes)))
 for q in range(0,Nspinners): 
     for u in range(0,(int)(1/etaRes)):
@@ -251,7 +251,7 @@ plt.ylabel('log(MSD)')
 plt.xlabel('eta')
 plt.savefig("MSDeta_" + jobNum + ".pdf")
 plt.close()
-'''
+
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -288,6 +288,7 @@ plt.close()
 Nspinners=10
 path=np.zeros((Nspinners,time_steps,2))
 for n in range(Nspinners):
+    print("Spinner: " + str(n))
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
@@ -298,7 +299,7 @@ for n in range(Nspinners):
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-plt.figure(figsize=((10,10))) # just the figure dimensions
+plt.figure(figsize=((12,10))) # just the figure dimensions
 cm=plt.cm.get_cmap('rainbow')
 t=range(time_steps)
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
@@ -324,7 +325,7 @@ plt.close()
 #WRITE OUTPUTS 
 #=======================================================================
 
-print("jobNum: " + str(jobNum))
+print("jobNum: " + str(jobNum) + "==========================================================")
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
@@ -342,7 +343,6 @@ if(basis==3):
     print("             " + "distorted")
 else:
     print("             " + "square")
-print("             " + "Force Calc: Original")
 
 #np.save('MSDeta' + str(jobNum) + '.npy', MSDeta[0,:])
 #np.save(outfile, MSDtau[0,:])
