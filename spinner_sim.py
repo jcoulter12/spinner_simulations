@@ -8,29 +8,28 @@ from time import strftime
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=3
+basis=0
 lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=1000
-Nspinners=1
+time_steps=100
+Nspinners=10
 
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
-eta=1
+eta=0.1
 omega=100.0
-gamma_t=1-eta
 Nres=30
 dt=10**-3
-noise=2E0
+noise=0
 etaRes=0.01
 tauRes=time_steps/50
 
-
-script,jobNum = argv
-
-'''
+script,jobNum, noise, eta = argv
+eta=float(eta)
+noise=float(noise)
+gamma_t=1-eta
 #=======================================================================
 # This creates the lattice
 #=======================================================================
@@ -110,7 +109,6 @@ else:
 # visualizing the lattice
 #=======================================================================
 plt.figure(figsize=(10,10))
-#plt.subplot(3,1,1)
 x_obst1=xsq1[:,0]*5
 y_obst1=xsq1[:,1]*5
 x_obst2=np.zeros((len(x_obst1),2)) 
@@ -140,7 +138,6 @@ def force_calc(vecx):
     r=np.zeros((len(r_cube1),2))
     #divide the force up by region
     for i in range(len(r_cube1)):
-        #DO YOU WANT ME TO REMOVE EFFECTS FROM THE OTHER FORCES, AND JUST HAVE THIS FORCE IF WE ARE IN THIS RANGE 
         if(r_cube1[i]<1): #it's close to the post
             if(r_cube1[i]==0):
                 r[i,0]=0
@@ -161,8 +158,8 @@ def force_calc(vecx):
         ym2=omega*(gamma_t*(vecx[1]-y_obst2)+eta*alpha*(vecx[0]-x_obst2)) 
         Fx= Fx + np.sum(xm2*r_cube2) 
         Fy= Fy + np.sum(ym2*r_cube2)
-    Fx+=noise*np.random.randn() 
-    Fy+=noise*np.random.randn() 
+    #Fx+=noise*np.random.randn() 
+    #Fy+=noise*np.random.randn() 
     return Fx,Fy
 
 #=======================================================================
@@ -172,24 +169,22 @@ def force_calc_stub():
     x_ens=np.zeros((Nspinners,time_steps,2))
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
-    x_vec[0,:]=np.random.randn(2)*10 #fills with a random start position
-    #print("Eta: "+str(eta) + " Gamma: " + str(gamma))
+    x_vec[0,:]=np.random.randn(2)*10 
     for i in range(1,time_steps):
-        #if np.mod(i,1000)==0: #every 10000 steps
-            #print("time is "+str(i)+" on traj "+str(n))
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
-        #if(i>10):   
+        #x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
         x_ens[0,:,:]=x_vec
     return x_ens
 #========================================================================
-
+Nspinners=1
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
 for i in range(0,Nspinners):
-    print("Spinner: "+str(i))
-    for j in range(0,(int)(1/etaRes)): #eta values, in increments of 0.1
+    #Eta values --------------------------------
+    '''
+    for j in range(0,(int)(1/etaRes)): 
         tau=1
         eta=j*etaRes
         gamma=1-eta
@@ -197,36 +192,55 @@ for i in range(0,Nspinners):
         for N in range(10,time_steps-tau):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time_steps-10)
-        print("MSDeta: " + str(MSDeta[i,j]))
-        if(j%10==0):
-            print(j)
-
-    for t in range(1,(int)(tauRes)): #tau values
-        eta=1
-        gamma=0
+    '''
+    #Tau values --------------------------------
+    for t in range(0,(int)(tauRes)): 
+        #eta=1
+        #gamma=0
+        tau=t+1
         x_path=force_calc_stub()
-        for N in range(10,time_steps-(t)):
-            MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+t,0])**2+(x_path[0,N,1]-x_path[0,N+t,1])**2
-        MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(t-1))
-print("done")
+        for N in range(10,time_steps-(tau)):
+            MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
+        MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
+#print("done")
 
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
 x_vals=np.zeros((Nspinners,tauRes))
 for q in range(0,Nspinners): 
-    for u in range((int)(tauRes)):
-        x_vals[q,u]=u 
+    for u in range(0,(int)(tauRes)):
+        x_vals[q,u]=u+1 
 plt.scatter(np.log10(x_vals[:,:]),np.log10(MSDtau[:,:]))
-plt.xlim(0,2)
-plt.ylabel('log(MSD)')
-plt.xlabel('log(delta tau)')
-plt.savefig("MSDtau_"+ jobNum + ".pdf")
+#plt.xlim(0,2)
+plt.ylabel('(MSD)')
+plt.xlabel('(delta tau)')
+x=np.log10(x_vals[0,:])
+x[x_vals[0,:]==0]=0   
+y=np.log10(MSDtau[0,:])
+y[MSDtau[0,:]==0]=0 
+'''
+plt.scatter((x_vals[:,:]),((MSDtau[:,:])))
+ax = plt.gca()
+ax.set_yscale('log')
+ax.set_xscale('log')
+z = np.polyfit(x_vals[0,:], MSDtau[0,:], 1)
+p = z[0]*x_vals[0,:] + z[1] 
+plt.plot(x_vals[0,:],p[:],"r--")
+'''
+plt.scatter(x,y)
+z = np.polyfit(x, y, 1)
+#p = np.log10(z[0])+x_vals[0,:]*z[1]
+p = z[0]*x + z[1] 
+plt.plot(x,p[:],"r--")
+print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
+
+plt.savefig("MSDtau_"+ str(jobNum) + "_eta" + str(eta) + ".pdf")
 plt.close()
 #=======================================================================
 # PLOT MSD vs eta
 #=======================================================================
-
+'''
 x_vals=np.zeros((Nspinners,(int)(1/etaRes)))
 for q in range(0,Nspinners): 
     for u in range(0,(int)(1/etaRes)):
@@ -237,12 +251,11 @@ plt.ylabel('log(MSD)')
 plt.xlabel('eta')
 plt.savefig("MSDeta_" + jobNum + ".pdf")
 plt.close()
-
+'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
-x_vf=np.zeros((2*Nres,2*Nres,2)) #x and y position vector
-#SYNTAX FIX! 
+x_vf=np.zeros((2*Nres,2*Nres,2)) 
 for q in range(-Nres,Nres):
     for u in range(-Nres,Nres):
         x_vf[q,u]=q,u
@@ -267,19 +280,56 @@ if(basis==2):
 plt.title('Preliminary Vector Field Plot')
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
-plt.savefig("vector_field.pdf")
-plt.close                
+plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
+plt.close()  
+#=======================================================================
+# CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
+#=======================================================================
+Nspinners=10
+path=np.zeros((Nspinners,time_steps,2))
+for n in range(Nspinners):
+    x_vec=np.zeros((time_steps,2))
+    f_vec=np.zeros((time_steps,2))
+    x_vec[0,:]=np.random.randn(2)*10 
+    for i in range(1,time_steps):
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+np.sqrt(dt)*noise*np.random.randn() 
+        f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
+    path[n,:,:]=x_vec
+#=======================================================================
+# DRAW OUT THE TRAJECTORY IN TIME
+#=======================================================================
+plt.figure(figsize=((10,10))) # just the figure dimensions
+cm=plt.cm.get_cmap('rainbow')
+t=range(time_steps)
+plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
+            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
+            cmap=cm,
+            scale=1000
+            )
+l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+for n in range(Nspinners):
+    sc=plt.scatter(path[n,:,0],path[n,:,1], 
+                    c=t, 
+                    vmin=0, 
+                    vmax=time_steps, 
+                    s=30, 
+                    cmap=cm
+                    )
+plt.xlim(-20,20)
+plt.ylim(-20,20)
+plt.colorbar(sc)
+plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
+plt.close() 
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
-'''
-MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
 print("jobNum: " + str(jobNum))
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
-print("etaRes: " + str(etaRes))
+print("etaRes: " + str(etaRes) + " eta: " + str(eta))
+print("gamma:" + str(gamma_t))
 print("timesteps: " + str(time_steps))
 print("dt: " + str(dt))
 print("Nposts: " + str(Nposts))
@@ -294,5 +344,5 @@ else:
     print("             " + "square")
 print("             " + "Force Calc: Original")
 
-np.save('MSDeta' + str(jobNum) + '.npy', MSDeta[0,:])
+#np.save('MSDeta' + str(jobNum) + '.npy', MSDeta[0,:])
 #np.save(outfile, MSDtau[0,:])
