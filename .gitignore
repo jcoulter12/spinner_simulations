@@ -1,3 +1,5 @@
 outputs/
 *.npy
 *.pdf
+*.txt
+

@@ -19,17 +19,17 @@ Nspinners=7
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
 eta=0.1
-omega=100.0
+#omega=100.0
 Nres=30
 dt=10**-3
 noise=0
 etaRes=0.01
-tauRes=time_steps/200
 
-script,jobNum, noise, eta = argv
+script,jobNum, noise, eta, omega = argv
 eta=float(eta)
 noise=float(noise)
 gamma_t=1-eta
+omega=float(omega)
 #=======================================================================
 # This creates the lattice
 #=======================================================================
@@ -178,8 +178,10 @@ def force_calc_stub():
     return x_ens
 #========================================================================
 Nspinners=1
+tauRes=50
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
+time_steps=1000
 
 for i in range(0,Nspinners):
     #Eta values --------------------------------
@@ -189,9 +191,9 @@ for i in range(0,Nspinners):
         eta=j*etaRes
         gamma=1-eta
         x_path=force_calc_stub()
-        for N in range(10,time_steps-tau):
+        for N in range(10,time-tau):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
-        MSDeta[i,j]=MSDeta[i,j]/(time_steps-10)
+        MSDeta[i,j]=MSDeta[i,j]/(time-10)
     '''
     x_path=force_calc_stub()
     #Tau values --------------------------------
@@ -203,7 +205,7 @@ for i in range(0,Nspinners):
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
 print("done")
-
+time_steps=10000
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -237,6 +239,7 @@ print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
 
 plt.savefig("MSDtau_"+ str(jobNum) + "_eta" + str(eta) + ".pdf")
 plt.close()
+'''
 #=======================================================================
 # PLOT MSD vs eta
 #=======================================================================
@@ -251,7 +254,7 @@ plt.ylabel('log(MSD)')
 plt.xlabel('eta')
 plt.savefig("MSDeta_" + jobNum + ".pdf")
 plt.close()
-
+'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -285,7 +288,7 @@ plt.close()
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-Nspinners=10
+Nspinners=7
 path=np.zeros((Nspinners,time_steps,2))
 for n in range(Nspinners):
     print("Spinner: " + str(n))
@@ -318,7 +321,7 @@ for n in range(Nspinners):
                     )
 plt.xlim(-20,20)
 plt.ylim(-20,20)
-plt.colorbar(sc)
+#plt.colorbar(sc)
 plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
 plt.close() 
 #=======================================================================
