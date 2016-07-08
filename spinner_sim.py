@@ -1,4 +1,4 @@
-import numpy as np
+iport numpy as np
 from matplotlib import pyplot as plt
 import scipy.io as sio
 import os
@@ -172,7 +172,7 @@ def force_calc_stub():
     x_vec[0,:]=np.random.randn(2)*10 
     for i in range(1,time_steps):
         #x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]*np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
         x_ens[0,:,:]=x_vec
     return x_ens
@@ -296,7 +296,7 @@ for n in range(Nspinners):
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
     for i in range(1,time_steps):
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]*np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
     path[n,:,:]=x_vec
 #=======================================================================
