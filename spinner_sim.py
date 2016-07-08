@@ -172,7 +172,7 @@ def force_calc_stub():
     x_vec[0,:]=np.random.randn(2)*10 
     for i in range(1,time_steps):
         #x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
         x_ens[0,:,:]=x_vec
     return x_ens
@@ -275,7 +275,7 @@ cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
             (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
             cmap=cm,
-            scale=1000
+            scale=10*omega
             )
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
 if(basis==2):
@@ -296,19 +296,19 @@ for n in range(Nspinners):
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
     for i in range(1,time_steps):
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+np.sqrt(dt)*noise*np.random.randn() 
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
     path[n,:,:]=x_vec
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-plt.figure(figsize=((12,10))) # just the figure dimensions
+plt.figure(figsize=((10,10))) # just the figure dimensions
 cm=plt.cm.get_cmap('rainbow')
 t=range(time_steps)
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
             (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
             cmap=cm,
-            scale=1000
+            scale=10*omega
             )
 l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
 for n in range(Nspinners):
@@ -319,8 +319,8 @@ for n in range(Nspinners):
                     s=30, 
                     cmap=cm
                     )
-plt.xlim(-20,20)
-plt.ylim(-20,20)
+plt.xlim((-20+noise*-1),20+noise)
+plt.ylim((-20+noise*-1),20+noise)
 #plt.colorbar(sc)
 plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
 plt.close() 
