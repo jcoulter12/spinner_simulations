@@ -1,4 +1,4 @@
-iport numpy as np
+import numpy as np
 from matplotlib import pyplot as plt
 import scipy.io as sio
 import os
@@ -13,8 +13,8 @@ lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=10000
-Nspinners=7
+time_steps=100
+Nspinners=1
 
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
@@ -123,7 +123,6 @@ plt.ylim(-20,20)
 plt.axis('off')
 plt.savefig("lattice.pdf")
 plt.close()
-
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================
@@ -170,9 +169,12 @@ def force_calc_stub():
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
+    unit_vec=[1,1]
     for i in range(1,time_steps):
         #x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]*np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
+        x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
         x_ens[0,:,:]=x_vec
     return x_ens
@@ -181,7 +183,7 @@ Nspinners=1
 tauRes=50
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
-time_steps=1000
+time_steps=100
 
 for i in range(0,Nspinners):
     #Eta values --------------------------------
@@ -195,17 +197,16 @@ for i in range(0,Nspinners):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time-10)
     '''
-    x_path=force_calc_stub()
     #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         #eta=1
         #gamma=0
         tau=t+1
+        x_path=force_calc_stub()
         for N in range(10,time_steps-(tau)):
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
-print("done")
-time_steps=10000
+time_steps=100
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -275,7 +276,7 @@ cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
             (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
             cmap=cm,
-            scale=10*omega
+            scale=100*omega
             )
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
 if(basis==2):
@@ -288,15 +289,19 @@ plt.close()
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-Nspinners=7
+Nspinners=5
 path=np.zeros((Nspinners,time_steps,2))
 for n in range(Nspinners):
     print("Spinner: " + str(n))
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
+    xunit_vec=[1,0]
+    yunit_vec=[0,1]
     for i in range(1,time_steps):
-        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)+[1,0]*np.sqrt(dt)*noise*np.random.randn()+[0,1]*np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
+        x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
+        x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
     path[n,:,:]=x_vec
 #=======================================================================
@@ -308,7 +313,7 @@ t=range(time_steps)
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
             (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
             cmap=cm,
-            scale=10*omega
+            scale=100*omega
             )
 l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
 for n in range(Nspinners):
@@ -319,8 +324,8 @@ for n in range(Nspinners):
                     s=30, 
                     cmap=cm
                     )
-plt.xlim((-20+noise*-1),20+noise)
-plt.ylim((-20+noise*-1),20+noise)
+plt.xlim(-20,20)
+plt.ylim(-20,20)
 #plt.colorbar(sc)
 plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
 plt.close() 
@@ -347,5 +352,7 @@ if(basis==3):
 else:
     print("             " + "square")
 
-#np.save('MSDeta' + str(jobNum) + '.npy', MSDeta[0,:])
-#np.save(outfile, MSDtau[0,:])
+np.save('MSDtau' + str(jobNum) + '.npy', MSDtau[0,:])
+np.save('traj' + str(jobNum) + '.npy', path)
+np.save('lattice_x.npy', x_obst1)
+np.save('lattice_y.npy',y_obst1)
