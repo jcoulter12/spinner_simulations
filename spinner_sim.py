@@ -188,11 +188,12 @@ Nspinners=1
 tauRes=50
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
+'''
 time_steps=1000
 
 for i in range(0,Nspinners):
     #Eta values --------------------------------
-    '''
+    
     for j in range(0,(int)(1/etaRes)): 
         tau=1
         eta=j*etaRes
@@ -201,8 +202,9 @@ for i in range(0,Nspinners):
         for N in range(10,time-tau):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time-10)
-    '''
-    #Tau values --------------------------------
+    
+    x_path=force_calc_stub()    
+#Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         #eta=1
         #gamma=0
@@ -212,7 +214,7 @@ for i in range(0,Nspinners):
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
 time_steps=10000
-'''
+
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
