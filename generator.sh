@@ -20,7 +20,7 @@ do
       do
 	omega=$(($omega*10))
 	export omega
-      	#echo "mkdir outputs/PDFs-N$noise-W$omega"
+      	echo "mkdir outputs/PDFs-N$noise-W$omega"
 	echo "cd outputs/PDFs-N$noise-W$omega"
 	i=0
 	while [ $i -le $nJobs ];
