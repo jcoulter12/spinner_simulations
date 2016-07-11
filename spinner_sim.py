@@ -1,6 +1,6 @@
 import numpy as np
-from matplotlib import pyplot as plt
-import scipy.io as sio
+#from matplotlib import pyplot as plt
+#import scipy.io as sio
 import os
 import math
 from sys import argv
@@ -105,6 +105,11 @@ else:
             if(basis==1): #for honeycomb
                 xsq2[k,:]=((i*a2+x_shift)+(j*b2+y_shift))
             k+=1
+x_obst1=xsq1[:,0]*5
+y_obst1=xsq1[:,1]*5
+x_obst2=np.zeros((len(x_obst1),2))
+y_obst2=np.zeros((len(y_obst1),2))
+'''
 #=======================================================================
 # visualizing the lattice
 #=======================================================================
@@ -123,6 +128,7 @@ plt.ylim(-20,20)
 plt.axis('off')
 plt.savefig("lattice.pdf")
 plt.close()
+'''
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================

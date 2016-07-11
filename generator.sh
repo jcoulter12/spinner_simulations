@@ -29,7 +29,7 @@ do
 	   export jobNum
 	   eta=$(echo "scale=1;0.1+$i*0.4" | bc)
 	   #export eta
-	   echo "nohup python /Users/aak/Desktop/spinner_simulations/spinner_sim.py $jobNum $noise $eta $omega >> out.txt &"
+	   echo "nohup python2.7 /Users/aak/Desktop/spinner_simulations/spinner_sim.py $jobNum $noise $eta $omega >> out.txt &"
 	   let "i++"
 	done
 	echo "cd ../../"

@@ -18,6 +18,19 @@ y_obst1=np.load('lattice_y.npy')
 path=np.load('traj' + str(jobNum) + '.npy')
 
 #=======================================================================
+# visualizing the lattice
+#=======================================================================
+plt.figure(figsize=(10,10))
+p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
+#if(basis==1):
+    #p2=plt.plot(xsq2[:,0]*5,xsq2[:,1]*5,'o',markersize=15,markeredgewidth=4,color="blue")
+plt.xlim(-20,20)
+plt.ylim(-20,20)
+plt.axis('off')
+plt.savefig("lattice.pdf")
+plt.close()
+
+#=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
 x_vals=np.zeros(len(MSDtau))
