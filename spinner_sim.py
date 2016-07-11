@@ -13,7 +13,7 @@ lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=1000
+time_steps=10000
 Nspinners=5
 
 #FORCE ---------------
@@ -262,6 +262,7 @@ plt.xlabel('eta')
 plt.savefig("MSDeta_" + jobNum + ".pdf")
 plt.close()
 '''
+'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -273,6 +274,7 @@ f_vf=np.zeros((2*Nres,2*Nres,2))
 for i in range(-Nres,Nres): #rows
     for j in range(-Nres,Nres): #cols
         f_vf[i,j,0],f_vf[i,j,1]=force_calc(x_vf[i,j]/3)
+
 #=======================================================================
 #PLOT THE VECTOR FIELD
 #=======================================================================
@@ -291,7 +293,8 @@ plt.title('Preliminary Vector Field Plot')
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
-plt.close()  
+plt.close()
+'''  
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
