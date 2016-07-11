@@ -28,10 +28,8 @@ do
 	   jobNum=$i
 	   export jobNum
 	   eta=$(echo "scale=1;0.1+$i*0.4" | bc)
-	   #echo $eta
-	   export eta
+	   #export eta
 	   echo "nohup python /Users/aak/Desktop/spinner_simulations/spinner_sim.py $jobNum $noise $eta $omega >> out.txt &"
-	   #bsub -R "pool>5000" -M 3000000 -q 1nd -J merge_job_${eta} < /afs/cern.ch/work/j/jcoulter/WORK/CMSSW_5_3_20/src/tests/submit.sh
 	   let "i++"
 	done
 	echo "cd ../../"

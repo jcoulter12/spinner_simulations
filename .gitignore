@@ -3,3 +3,5 @@ outputs/
 *.pdf
 *.txt
 ss.py
+.DS_Store
+

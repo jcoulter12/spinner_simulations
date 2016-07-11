@@ -13,8 +13,8 @@ lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=100
-Nspinners=1
+time_steps=1000
+Nspinners=5
 
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
@@ -169,7 +169,6 @@ def force_calc_stub():
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
-    unit_vec=[1,1]
     for i in range(1,time_steps):
         #x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
         x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
@@ -183,7 +182,7 @@ Nspinners=1
 tauRes=50
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
-time_steps=100
+time_steps=1000
 
 for i in range(0,Nspinners):
     #Eta values --------------------------------
@@ -206,7 +205,8 @@ for i in range(0,Nspinners):
         for N in range(10,time_steps-(tau)):
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
-time_steps=100
+time_steps=10000
+'''
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -222,7 +222,7 @@ x=np.log10(x_vals[0,:])
 x[x_vals[0,:]==0]=0   
 y=np.log10(MSDtau[0,:])
 y[MSDtau[0,:]==0]=0 
-'''
+
 plt.scatter((x_vals[:,:]),((MSDtau[:,:])))
 ax = plt.gca()
 ax.set_yscale('log')
@@ -230,7 +230,7 @@ ax.set_xscale('log')
 z = np.polyfit(x_vals[0,:], MSDtau[0,:], 1)
 p = z[0]*x_vals[0,:] + z[1] 
 plt.plot(x_vals[0,:],p[:],"r--")
-'''
+
 plt.scatter(x,y)
 z = np.polyfit(x, y, 1)
 #p = np.log10(z[0])+x_vals[0,:]*z[1]
@@ -240,7 +240,7 @@ print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
 
 plt.savefig("MSDtau_"+ str(jobNum) + "_eta" + str(eta) + ".pdf")
 plt.close()
-'''
+
 #=======================================================================
 # PLOT MSD vs eta
 #=======================================================================
@@ -292,7 +292,7 @@ plt.close()
 Nspinners=5
 path=np.zeros((Nspinners,time_steps,2))
 for n in range(Nspinners):
-    print("Spinner: " + str(n))
+    #print("Spinner: " + str(n))
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
@@ -304,10 +304,11 @@ for n in range(Nspinners):
         x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
     path[n,:,:]=x_vec
+'''
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-plt.figure(figsize=((10,10))) # just the figure dimensions
+plt.figure(figsize=((10,10))) 
 cm=plt.cm.get_cmap('rainbow')
 t=range(time_steps)
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
@@ -328,7 +329,8 @@ plt.xlim(-20,20)
 plt.ylim(-20,20)
 #plt.colorbar(sc)
 plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
-plt.close() 
+plt.close()
+''' 
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
