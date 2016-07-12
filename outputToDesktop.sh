@@ -5,6 +5,8 @@ cd /Users/Donna/Desktop/test/Unslanted_Square/
 mkdir PDFs_$(date '+%d-%b-%Y-%k-%M') 
 cd PDFs_$(date '+%d-%b-%Y-%k-%M')
 
+nJobs=2
+i=0
 omega=1
 f=0
 n=1
@@ -12,7 +14,7 @@ w=1
 while [ $f -le 3 ]
 do
     if [ $f = 0 ]; then
-		noise=0
+	  noise=0
     else
 	  noise=$n
 	  n=$(($n*10))
@@ -21,14 +23,18 @@ do
     omega=1
     while [ $w -le 3 ]
     do
-		omega=$(($omega*10))
     	mkdir PDFs-N$noise-W$omega
 		cd PDFs-N$noise-W$omega
-		scp aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
-		scp aak@18.111.53.34:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
-		scp aak@18.111.120.38:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
-		cd ../
+		omega=$(($omega*10))
+		if [ $w = 1 ]; then
+			scp aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
+    	elif [ $w = 2 ]; then 
+			scp aak@18.111.53.34:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
+    	else 
+			scp aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
+    	fi
+		exit
 		let "w++"
     done
-	let "f++"
+    let "f++"
 done

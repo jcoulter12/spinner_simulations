@@ -22,13 +22,13 @@ do
     		ssh aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/
     	elif [ $w = 2 ]; then 
     		ssh aak@18.111.53.34:/Users/aak/Desktop/spinner_simulations/
-    	else 
-    		ssh aak@18.111.120.38:/Users/aak/Desktop/spinner_simulations/
+    	#else 
+    		#ssh aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/
     	fi
       	mkdir outputs/PDFs-N$noise-W$omega
 		cd outputs/PDFs-N$noise-W$omega
 		i=0
-		while [ $i -le $nJobs ];
+		while [ $i -le $nJobs ]
 		do
 			nohup python2.7 /Users/aak/Desktop/spinner_simulations/spinner_sim.py $i $noise $eta $omega >> out.txt &
 	   		let "i++"
