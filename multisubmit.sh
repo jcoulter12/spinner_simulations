@@ -19,17 +19,21 @@ do
     do
 		omega=$(($omega*10))
 		if [ $w = 1 ]; then
-    		ssh aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/
+    		ssh aak@18.111.51.247
+    		cd /Users/aak/Desktop/spinner_simulations/
     	elif [ $w = 2 ]; then 
-    		ssh aak@18.111.45.79:/Users/aak/Desktop/spinner_simulations/
-    	#else 
-    		#ssh aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/
+    		ssh aak@18.111.45.79
+    		cd /Users/aak/Desktop/spinner_simulations/
+    	else 
+    		ssh aak@18.111.62.233
+    		cd /Users/aak/Desktop/spinner_simulations/
     	fi
       	mkdir outputs/PDFs-N$noise-W$omega
 		cd outputs/PDFs-N$noise-W$omega
 		i=0
 		while [ $i -le $nJobs ]
 		do
+			echo "nohup python2.7 /Users/aak/Desktop/spinner_simulations/spinner_sim.py $i $noise $eta $omega >> out.txt &"
 			nohup python2.7 /Users/aak/Desktop/spinner_simulations/spinner_sim.py $i $noise $eta $omega >> out.txt &
 	   		let "i++"
 		done

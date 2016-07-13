@@ -354,7 +354,7 @@ plt.close()
 #=======================================================================
 
 print("jobNum: " + str(jobNum) + "==========================================================")
-print("Run Time : "datetime.now() - startTime)
+print("Run Time : " + str(datetime.now() - startTime))
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
