@@ -5,6 +5,8 @@ import os
 import math
 from sys import argv
 from time import strftime
+from datetime import datetime
+startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
@@ -188,10 +190,11 @@ Nspinners=1
 tauRes=50
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
-'''
+
 time_steps=1000
 
 for i in range(0,Nspinners):
+    '''
     #Eta values --------------------------------
     
     for j in range(0,(int)(1/etaRes)): 
@@ -204,17 +207,19 @@ for i in range(0,Nspinners):
         MSDeta[i,j]=MSDeta[i,j]/(time-10)
     
     x_path=force_calc_stub()    
-#Tau values --------------------------------
+    '''
+    #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         #eta=1
         #gamma=0
         tau=t+1
-        x_path=force_calc_stub()
         for N in range(10,time_steps-(tau)):
+            x_path=force_calc_stub()
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
+        print(MSDtau[i,t])
 time_steps=10000
-
+'''
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -296,12 +301,14 @@ plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
 plt.close()
-'''  
+
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
+'''
 Nspinners=5
 path=np.zeros((Nspinners,time_steps,2))
+'''
 for n in range(Nspinners):
     #print("Spinner: " + str(n))
     x_vec=np.zeros((time_steps,2))
@@ -315,7 +322,7 @@ for n in range(Nspinners):
         x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
     path[n,:,:]=x_vec
-'''
+
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
@@ -347,6 +354,7 @@ plt.close()
 #=======================================================================
 
 print("jobNum: " + str(jobNum) + "==========================================================")
+print("Run Time : "datetime.now() - startTime)
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))

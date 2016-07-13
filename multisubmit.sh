@@ -21,7 +21,7 @@ do
 		if [ $w = 1 ]; then
     		ssh aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/
     	elif [ $w = 2 ]; then 
-    		ssh aak@18.111.53.34:/Users/aak/Desktop/spinner_simulations/
+    		ssh aak@18.111.45.79:/Users/aak/Desktop/spinner_simulations/
     	#else 
     		#ssh aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/
     	fi

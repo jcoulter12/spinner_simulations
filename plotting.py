@@ -16,7 +16,7 @@ y_obst1=np.load('lattice_y.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
-    #p2=plt.plot(xsq2[:,0]*5,xsq2[:,1]*5,'o',markersize=15,markeredgewidth=4,color="blue")
+	#p2=plt.plot(xsq2[:,0]*5,xsq2[:,1]*5,'o',markersize=15,markeredgewidth=4,color="blue")
 plt.xlim(-20,20)
 plt.ylim(-20,20)
 plt.axis('off')
@@ -28,20 +28,19 @@ for i in range (0,jobNum):
 	#MSDeta[i,:]=np.load('MSDeta'+str(i)+'.npy')
 	MSDtau=np.load('MSDtau'+str(i)+'.npy')
 	path=np.load('traj' + str(i) + '.npy')
-
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
 	x_vals=np.zeros(len(MSDtau))
 	for u in range(0,len(MSDtau)):
-	    x_vals[u]=u+1 
-	plt.scatter(np.log10(x_vals[:]),np.log10(MSDtau[:]))
+		x_vals[u]=u+1
 	plt.ylabel('(MSD)')
 	plt.xlabel('(delta tau)')
 	x=np.log10(x_vals[:])
-	x[x_vals[:]==0]=0   
+	x[x_vals[:]==0]=0
 	y=np.log10(MSDtau[:])
-	y[MSDtau[:]==0]=0 
+	y[MSDtau[:]==0]=0
+	plt.scatter(x,y)
 
 	plt.scatter(x,y)
 	z = np.polyfit(x, y, 1)
@@ -49,7 +48,16 @@ for i in range (0,jobNum):
 	p = z[0]*x + z[1] 
 	plt.plot(x,p[:],"r--")
 	print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
+	'''
+	#do linear fit: log(y) = p(1) * log(x) + p(2)
+	p = np.polyfit(x, y, 1);
 
+	#retrieve original parameters
+	tau = p[0]
+	k = np.exp(p[1])
+	print("MSDtau Fit: y=%.6fx^(%.6f)"%(tau,k))
+	'''
+	#plt.loglog(x_vals, MSDtau, '.', x_vals, k*x_vals**tau, 'r')
 	plt.savefig("MSDtau_"+ str(i) + ".pdf")
 	plt.close()
 
@@ -68,13 +76,13 @@ for i in range (0,jobNum):
 	#            )
 	l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
 	for n in range(Nspinners):
-	    sc=plt.scatter(path[n,:,0],path[n,:,1], 
-	                    c=t, 
-	                    vmin=0, 
-	                    vmax=time_steps, 
-	                    s=30, 
-	                    cmap=cm
-	                    )
+			sc=plt.scatter(path[n,:,0],path[n,:,1], 
+											c=t, 
+											vmin=0, 
+											vmax=time_steps, 
+											s=30, 
+											cmap=cm
+											)
 	plt.xlim(-30,30)
 	plt.ylim(-30,30)
 	plt.savefig("traj" + str(i) + ".pdf")
