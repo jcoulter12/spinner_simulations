@@ -168,6 +168,8 @@ def force_calc(vecx):
         ym2=omega*(gamma_t*(vecx[1]-y_obst2)+eta*alpha*(vecx[0]-x_obst2)) 
         Fx= Fx + np.sum(xm2*r_cube2) 
         Fy= Fy + np.sum(ym2*r_cube2)
+    #Fx+=noise*np.random.randn() 
+    #Fy+=noise*np.random.randn() 
     return Fx,Fy
 
 #=======================================================================
@@ -194,7 +196,8 @@ MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
 for i in range(0,Nspinners):
     '''
-    #Eta values -------------------------------- 
+    #Eta values --------------------------------
+    
     for j in range(0,(int)(1/etaRes)): 
         tau=1
         eta=j*etaRes

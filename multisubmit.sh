@@ -5,7 +5,7 @@ omega=1
 f=0
 n=1
 w=1
-while [ $f -le 3 ]
+while [ $f -le 2 ]
 do
     if [ $f = 0 ]; then
 	  noise=0
