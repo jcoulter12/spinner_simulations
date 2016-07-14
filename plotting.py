@@ -46,15 +46,15 @@ for i in range (0,jobNum):
 		p = z[0]*x + z[1] 
 		plt.plot(x,p[:],"r--")
 		print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
-		'''
+
 		#do linear fit: log(y) = p(1) * log(x) + p(2)
 		p = np.polyfit(x, y, 1);
 
 		#retrieve original parameters
 		tau = p[0]
 		k = np.exp(p[1])
-		print("MSDtau Fit: y=%.6fx^(%.6f)"%(tau,k))
-		'''
+		print("MSDtau Exp Fit: y=%.6fx^(%.6f)"%(tau,k))
+
 		#plt.loglog(x_vals, MSDtau[p], '.', x_vals, k*x_vals**tau, 'r')
 		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		plt.close()
