@@ -211,7 +211,7 @@ for i in range(0,Nspinners):
         tau=t+1
         for N in range(10,time_steps-(tau)):
             #MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
-            MSDtau[i,t]+=(sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
+            MSDtau[i,t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
         #print(MSDtau[i,t])
 '''

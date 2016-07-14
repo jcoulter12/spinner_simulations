@@ -29,7 +29,7 @@ do
 		if [ $w = 1 ]; then
 			scp aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
     	elif [ $w = 2 ]; then 
-			scp aak@18.111.45.79:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
+			scp aak@18.111.97.37:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
     	else 
 			scp aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
     	fi

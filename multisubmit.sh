@@ -22,7 +22,7 @@ do
     		ssh aak@18.111.51.247
     		cd /Users/aak/Desktop/spinner_simulations/
     	elif [ $w = 2 ]; then 
-    		ssh aak@18.111.45.79
+    		ssh aak@18.111.97.37
     		cd /Users/aak/Desktop/spinner_simulations/
     	else 
     		ssh aak@18.111.62.233
