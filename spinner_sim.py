@@ -304,7 +304,7 @@ plt.close()
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
 '''
-Nspinners=5
+#Nspinners=5
 path=np.zeros((Nspinners,time_steps,2))
 '''
 for n in range(Nspinners):
