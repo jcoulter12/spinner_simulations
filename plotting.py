@@ -6,7 +6,7 @@ import math
 from sys import argv
 from time import strftime
 
-jobNum=4
+jobNum=1
 #=======================================================================
 # visualizing the lattice
 #=======================================================================
@@ -37,25 +37,27 @@ for i in range (0,jobNum):
 	plt.xlabel('(delta tau)')
 	x=np.log10(x_vals[:])
 	x[x_vals[:]==0]=0
-	for n in range(0,3):
+	for n in range(0,1):
 		y=np.log10(MSDtau[n,:])
 		y[MSDtau[n,:]==0]=0
-		#plt.scatter(x,y)
+		plt.scatter(x,y)
 		z = np.polyfit(x, y, 1)
 		#p = np.log10(z[0])+x_vals[:]*z[1]
 		p = z[0]*x + z[1] 
 		plt.plot(x,p[:],"r--")
 		print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
+		for u in range(0,len(MSDtau[0])):
+			print(MSDtau[n,u])
 
 		#do linear fit: log(y) = p(1) * log(x) + p(2)
-		p = np.polyfit(x, y, 1);
+		p = np.polyfit(x, y, 1)
 
 		#retrieve original parameters
 		tau = p[0]
 		k = np.exp(p[1])
-		print("MSDtau Exp Fit: y=%.6fx^(%.6f)"%(tau,k))
-		plt.loglog(x_vals, MSDtau[n], '.')
-		plt.loglog(x_vals, k*x_vals**tau, 'r')
+		print("MSDtau Exp Fit: y=%.6fx^(%.6f)"%(k,tau))
+		#plt.loglog(x_vals, MSDtau[n], '.')
+		#plt.loglog(x_vals, k*x_vals**tau, 'r')
 		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		plt.close()
 #=======================================================================
