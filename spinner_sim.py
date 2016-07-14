@@ -32,6 +32,9 @@ eta=float(eta)
 noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
+#to be sure the path is visible afterwards
+if(omega==1000):
+    time_steps=time_steps/5
 #=======================================================================
 # This creates the lattice
 #=======================================================================
