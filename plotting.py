@@ -37,9 +37,9 @@ for i in range (0,jobNum):
 	plt.xlabel('(delta tau)')
 	x=np.log10(x_vals[:])
 	x[x_vals[:]==0]=0
-	for p in range(0,3)
-		y=np.log10(MSDtau[p,:])
-		y[MSDtau[p,:]==0]=0
+	for n in range(0,3):
+		y=np.log10(MSDtau[n,:])
+		y[MSDtau[n,:]==0]=0
 		plt.scatter(x,y)
 		z = np.polyfit(x, y, 1)
 		#p = np.log10(z[0])+x_vals[:]*z[1]
@@ -56,7 +56,7 @@ for i in range (0,jobNum):
 		print("MSDtau Fit: y=%.6fx^(%.6f)"%(tau,k))
 		'''
 		#plt.loglog(x_vals, MSDtau[p], '.', x_vals, k*x_vals**tau, 'r')
-		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(p)+ ".pdf")
+		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
