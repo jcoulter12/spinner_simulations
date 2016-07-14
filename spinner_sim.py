@@ -186,12 +186,10 @@ def force_calc_stub():
         x_ens[0,:,:]=x_vec
     return x_ens
 #========================================================================
-Nspinners=1
-tauRes=50
+Nspinners=3
+tauRes=500
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
-
-time_steps=1000
 
 for i in range(0,Nspinners):
     '''
@@ -206,19 +204,16 @@ for i in range(0,Nspinners):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time-10)
     
-    x_path=force_calc_stub()    
     '''
+    x_path=force_calc_stub()    
     #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
-        #eta=1
-        #gamma=0
         tau=t+1
+        x_path=force_calc_stub()
         for N in range(10,time_steps-(tau)):
-            x_path=force_calc_stub()
             MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
-        print(MSDtau[i,t])
-time_steps=10000
+        #print(MSDtau[i,t])
 '''
 #=======================================================================
 # PLOT MSD vs delta tau
@@ -373,7 +368,7 @@ if(basis==3):
 else:
     print("             " + "square")
 
-np.save('MSDtau' + str(jobNum) + '.npy', MSDtau[0,:])
+np.save('MSDtau' + str(jobNum) + '.npy', MSDtau)
 np.save('traj' + str(jobNum) + '.npy', path)
 np.save('lattice_x.npy', x_obst1)
 np.save('lattice_y.npy',y_obst1)
