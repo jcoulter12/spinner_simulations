@@ -3,12 +3,10 @@ from matplotlib import pyplot as plt
 import scipy.io as sio
 import os
 import math
-#import sys; sys.path.append('/sansom/sc2/bioc1009/github_projects/diffusion_utility/diffusion_analysis_MD_simulations')
-#import diffusion_analysis
 from sys import argv
 from time import strftime
 
-jobNum=3
+jobNum=4
 #=======================================================================
 # visualizing the lattice
 #=======================================================================
@@ -32,7 +30,9 @@ for i in range (0,jobNum):
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
-	x_vals=np.zeros(len(MSDtau[0]))
+	#x_vals=np.zeros(len(MSDtau[0]))
+	print(MSDtau)
+	x_vals=np.zeros(500)
 	for u in range(0,len(MSDtau[0])):
 		x_vals[u]=u+1
 	plt.ylabel('(MSD)')
@@ -62,11 +62,13 @@ for i in range (0,jobNum):
 		#plt.loglog(x_vals, k*x_vals**tau, 'r')
 		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		plt.close()
+
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
 	time_steps=len(path[0])
 	Nspinners=len(path)
+	#plt.title("")
 	plt.figure(figsize=((10,10))) 
 	cm=plt.cm.get_cmap('rainbow')
 	t=range(time_steps)
@@ -81,12 +83,13 @@ for i in range (0,jobNum):
 											c=t, 
 											vmin=0, 
 											vmax=time_steps, 
-											s=30, 
+											s=30,
+											edgecolors='none',
 											cmap=cm
 											)
 	plt.xlim(-30,30)
 	plt.ylim(-30,30)
-	plt.savefig("traj" + str(i) + ".pdf")
+	plt.savefig("traj" + str(i) + ".png")
 	plt.close()
 	
 print("done!")
