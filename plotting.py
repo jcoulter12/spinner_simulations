@@ -6,7 +6,7 @@ import math
 from sys import argv
 from time import strftime
 
-jobNum=1
+jobNum=3
 #=======================================================================
 # visualizing the lattice
 #=======================================================================
@@ -37,7 +37,7 @@ for i in range (0,jobNum):
 	plt.xlabel('(delta tau)')
 	x=np.log10(x_vals[:])
 	x[x_vals[:]==0]=0
-	for n in range(0,1):
+	for n in range(0,3):
 		y=np.log10(MSDtau[n,:])
 		y[MSDtau[n,:]==0]=0
 		plt.scatter(x,y)
@@ -46,8 +46,8 @@ for i in range (0,jobNum):
 		p = z[0]*x + z[1] 
 		plt.plot(x,p[:],"r--")
 		print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
-		for u in range(0,len(MSDtau[0])):
-			print(MSDtau[n,u])
+		#for u in range(0,len(MSDtau[0])):
+		#	print(MSDtau[n,u])
 
 		#do linear fit: log(y) = p(1) * log(x) + p(2)
 		p = np.polyfit(x, y, 1)
