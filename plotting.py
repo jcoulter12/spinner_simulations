@@ -32,7 +32,7 @@ for i in range (0,jobNum):
 #=======================================================================
 	#x_vals=np.zeros(len(MSDtau[0]))
 	print(MSDtau)
-	x_vals=np.zeros(500)
+	x_vals=np.zeros(len(MSDtau[0]))
 	for u in range(0,len(MSDtau[0])):
 		x_vals[u]=u+1
 	plt.ylabel('(MSD)')
