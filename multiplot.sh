@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#WHEN USING THIS SCRIPT, CALL FROM THE WORKING DIRECTORY OF YOUR OUTPUT FILES 
 #cd /Users/Donna/Desktop/test/Unslanted_Square/
 
 omega=1
@@ -21,6 +22,7 @@ do
 		omega=$(($omega*10))
 		echo "cd PDFs-N$noise-W$omega"
 		cd PDFs-N$noise-W$omega
+		echo "PDFs-N$noise-W$omega ==================" > plotting_out.txt
 		python2.7 /Users/Donna/Desktop/AAK_Group/spinner_simulations/plotting.py >> out.txt
 		cd ../
 		let "w++"

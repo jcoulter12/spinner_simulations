@@ -2,8 +2,10 @@
 
 cd /Users/Donna/Desktop/test/Unslanted_Square/
 
-mkdir PDFs_$(date '+%d-%b-%Y-%k-%M') 
-cd PDFs_$(date '+%d-%b-%Y-%k-%M')
+#mkdir PDFs_$(date '+%d-%b-%Y-%k-%M') 
+#cd PDFs_$(date '+%d-%b-%Y-%k-%M')
+mkdir PDFs_please
+cd PDFs_please
 
 nJobs=2
 i=0
@@ -23,18 +25,18 @@ do
     omega=1
     while [ $w -le 3 ]
     do
-    	mkdir PDFs-N$noise-W$omega
-		cd PDFs-N$noise-W$omega
 		omega=$(($omega*10))
-		if [ $w = 1 ]; then
+		mkdir PDFs-N$noise-W$omega
+		cd PDFs-N$noise-W$omega
+		if [ $f = 0 ]; then
 			scp aak@18.111.51.247:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
-    	elif [ $w = 2 ]; then 
+    	elif [ $f = 1 ]; then 
 			scp aak@18.111.97.37:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
     	else 
 			scp aak@18.111.62.233:/Users/aak/Desktop/spinner_simulations/outputs/PDFs-N$noise-W$omega/* .
     	fi
-		exit
 		let "w++"
+		cd ../
     done
     let "f++"
 done
