@@ -188,7 +188,7 @@ def force_calc_stub():
     return x_ens
 #========================================================================
 Nspinners=3
-tauRes=500
+tauRes=1000
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
@@ -209,7 +209,7 @@ for i in range(0,Nspinners):
     #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         tau=t+1
-        for N in range(100,time_steps-(tau)):
+        for N in range(200,time_steps-(tau)):
             #MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
             MSDtau[i,t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
         MSDtau[i,t]=MSDtau[i,t]/(time_steps-100-(tau-1))

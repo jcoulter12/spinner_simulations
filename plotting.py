@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 import scipy.io as sio
 import os
 import math
+#import sys; sys.path.append('/sansom/sc2/bioc1009/github_projects/diffusion_utility/diffusion_analysis_MD_simulations')
+#import diffusion_analysis
 from sys import argv
 from time import strftime
 
