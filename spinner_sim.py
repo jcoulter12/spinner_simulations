@@ -188,7 +188,7 @@ def force_calc_stub():
     return x_ens
 #========================================================================
 Nspinners=3
-tauRes=100
+tauRes=500
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
