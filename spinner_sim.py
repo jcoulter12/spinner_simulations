@@ -15,8 +15,10 @@ lattice_constant=1
 Nposts=50
 
 #TIME ----------------
-time_steps=10000
+time_steps=100000
 Nspinners=5
+tauSpinners=3
+tauRes=5000
 
 #FORCE ---------------
 alpha=1 #weight parameter for ym and xm later
@@ -187,12 +189,10 @@ def force_calc_stub():
         x_ens[0,:,:]=x_vec
     return x_ens
 #========================================================================
-Nspinners=3
-tauRes=1000
-MSDtau=np.zeros((Nspinners,tauRes))
-MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
+#MSDtau=np.zeros(tauRes)
+MSDeta=np.zeros((tauSpinners,(int)(1/etaRes)))
 
-for i in range(0,Nspinners):
+for i in range(0,tauSpinners):
     '''
     #Eta values -------------------------------- 
     for j in range(0,(int)(1/etaRes)): 
@@ -203,68 +203,19 @@ for i in range(0,Nspinners):
         for N in range(10,time-tau):
             MSDeta[i,j]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
         MSDeta[i,j]=MSDeta[i,j]/(time-10)
-    
     '''
+    MSDtau=np.zeros(tauRes)
     x_path=force_calc_stub()    
     #Tau values --------------------------------
-    for t in range(0,(int)(tauRes)): 
-        tau=t+1
+    for t in range(0,tauRes): 
+        tau=(t+1)*2
         for N in range(200,time_steps-(tau)):
-            #MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
-            MSDtau[i,t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-        MSDtau[i,t]=MSDtau[i,t]/(time_steps-100-(tau-1))
-        #print(MSDtau[i,t])
-'''
-#=======================================================================
-# PLOT MSD vs delta tau
-#=======================================================================
-x_vals=np.zeros((Nspinners,tauRes))
-for q in range(0,Nspinners): 
-    for u in range(0,(int)(tauRes)):
-        x_vals[q,u]=u+1 
-plt.scatter(np.log10(x_vals[:,:]),np.log10(MSDtau[:,:]))
-#plt.xlim(0,2)
-plt.ylabel('(MSD)')
-plt.xlabel('(delta tau)')
-x=np.log10(x_vals[0,:])
-x[x_vals[0,:]==0]=0   
-y=np.log10(MSDtau[0,:])
-y[MSDtau[0,:]==0]=0 
+            #MSDtau[t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
+            MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
+        MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
+        #print(MSDtau[t])
+    np.save('MSDtau' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
 
-plt.scatter((x_vals[:,:]),((MSDtau[:,:])))
-ax = plt.gca()
-ax.set_yscale('log')
-ax.set_xscale('log')
-z = np.polyfit(x_vals[0,:], MSDtau[0,:], 1)
-p = z[0]*x_vals[0,:] + z[1] 
-plt.plot(x_vals[0,:],p[:],"r--")
-
-plt.scatter(x,y)
-z = np.polyfit(x, y, 1)
-#p = np.log10(z[0])+x_vals[0,:]*z[1]
-p = z[0]*x + z[1] 
-plt.plot(x,p[:],"r--")
-print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
-
-plt.savefig("MSDtau_"+ str(jobNum) + "_eta" + str(eta) + ".pdf")
-plt.close()
-
-#=======================================================================
-# PLOT MSD vs eta
-#=======================================================================
-
-x_vals=np.zeros((Nspinners,(int)(1/etaRes)))
-for q in range(0,Nspinners): 
-    for u in range(0,(int)(1/etaRes)):
-        x_vals[q,u]=u*etaRes #increments of 0.1?
-plt.scatter((x_vals[:,:]),np.log10(MSDeta[:,:]))
-plt.xlim(0,1.1)
-plt.ylabel('log(MSD)')
-plt.xlabel('eta')
-plt.savefig("MSDeta_" + jobNum + ".pdf")
-plt.close()
-'''
-'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -276,7 +227,7 @@ f_vf=np.zeros((2*Nres,2*Nres,2))
 for i in range(-Nres,Nres): #rows
     for j in range(-Nres,Nres): #cols
         f_vf[i,j,0],f_vf[i,j,1]=force_calc(x_vf[i,j]/3)
-
+'''
 #=======================================================================
 #PLOT THE VECTOR FIELD
 #=======================================================================
@@ -296,16 +247,13 @@ plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
 plt.close()
-
+'''
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-'''
-#Nspinners=5
-path=np.zeros((Nspinners,time_steps,2))
-'''
+#path=np.zeros((time_steps,2))
+
 for n in range(Nspinners):
-    #print("Spinner: " + str(n))
     x_vec=np.zeros((time_steps,2))
     f_vec=np.zeros((time_steps,2))
     x_vec[0,:]=np.random.randn(2)*10 
@@ -316,34 +264,8 @@ for n in range(Nspinners):
         x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
         x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
         f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
-    path[n,:,:]=x_vec
-
-#=======================================================================
-# DRAW OUT THE TRAJECTORY IN TIME
-#=======================================================================
-plt.figure(figsize=((10,10))) 
-cm=plt.cm.get_cmap('rainbow')
-t=range(time_steps)
-plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
-            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
-            cmap=cm,
-            scale=100*omega
-            )
-l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
-for n in range(Nspinners):
-    sc=plt.scatter(path[n,:,0],path[n,:,1], 
-                    c=t, 
-                    vmin=0, 
-                    vmax=time_steps, 
-                    s=30, 
-                    cmap=cm
-                    )
-plt.xlim(-20,20)
-plt.ylim(-20,20)
-#plt.colorbar(sc)
-plt.savefig("traj" + str(jobNum) + "_eta" + str(eta) +  ".pdf")
-plt.close()
-''' 
+    #path[:,:]=x_vec
+    np.save('traj' + str(jobNum) + 'spinner_'+ str(n) + '.npy', x_vec)
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
@@ -368,7 +290,5 @@ if(basis==3):
 else:
     print("             " + "square")
 
-np.save('MSDtau' + str(jobNum) + '.npy', MSDtau)
-np.save('traj' + str(jobNum) + '.npy', path)
 np.save('lattice_x.npy', x_obst1)
-np.save('lattice_y.npy',y_obst1)
+np.save('lattice_y.npy', y_obst1)

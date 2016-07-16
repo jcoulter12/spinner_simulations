@@ -168,8 +168,6 @@ def force_calc(vecx):
         ym2=omega*(gamma_t*(vecx[1]-y_obst2)+eta*alpha*(vecx[0]-x_obst2)) 
         Fx= Fx + np.sum(xm2*r_cube2) 
         Fy= Fy + np.sum(ym2*r_cube2)
-    #Fx+=noise*np.random.randn() 
-    #Fy+=noise*np.random.randn() 
     return Fx,Fy
 
 #=======================================================================
@@ -190,14 +188,13 @@ def force_calc_stub():
     return x_ens
 #========================================================================
 Nspinners=3
-tauRes=100
+tauRes=500
 MSDtau=np.zeros((Nspinners,tauRes))
 MSDeta=np.zeros((Nspinners,(int)(1/etaRes)))
 
 for i in range(0,Nspinners):
     '''
-    #Eta values --------------------------------
-    
+    #Eta values -------------------------------- 
     for j in range(0,(int)(1/etaRes)): 
         tau=1
         eta=j*etaRes
@@ -212,9 +209,10 @@ for i in range(0,Nspinners):
     #Tau values --------------------------------
     for t in range(0,(int)(tauRes)): 
         tau=t+1
-        for N in range(10,time_steps-(tau)):
-            MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
-        MSDtau[i,t]=MSDtau[i,t]/(time_steps-10-(tau-1))
+        for N in range(100,time_steps-(tau)):
+            #MSDtau[i,t]+=(x_path[0,N,0]-x_path[0,N+tau,0])**2+(x_path[0,N,1]-x_path[0,N+tau,1])**2
+            MSDtau[i,t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
+        MSDtau[i,t]=MSDtau[i,t]/(time_steps-100-(tau-1))
         #print(MSDtau[i,t])
 '''
 #=======================================================================

@@ -15,10 +15,14 @@ do
 	  noise=$n
 	  n=$(($n*10))
     fi
-    w=1
-    omega=1
+    w=0
     while [ $w -le 3 ]
     do
+    	if [ $w = 0 ]; then
+			omega=0
+		else
+			omega=$((10**$w))
+		fi
 		omega=$(($omega*10))
 		echo "cd PDFs-N$noise-W$omega"
 		cd PDFs-N$noise-W$omega
