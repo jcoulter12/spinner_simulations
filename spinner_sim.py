@@ -72,6 +72,8 @@ def lattice_generator():
 			k+=1   
 	x_obst1=xsq1[:,0]*5
 	y_obst1=xsq1[:,1]*5
+	np.save('lattice_x_shift_' + str(shift) + '.npy', x_obst1)
+	np.save('lattice_y_shift_' + str(shift) + '.npy', y_obst1)
 #=======================================================================
 # This creates either of the two defined lattice types
 #=======================================================================
@@ -248,7 +250,7 @@ print("Run Time : " + str(datetime.now() - startTime))
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
-print("MSDSpinners: " + str(MSDspinners))
+print("MSDSpinners: " + str(MSDSpinners))
 print("etaRes: " + str(etaRes) + " eta: " + str(eta))
 print("gamma:" + str(gamma_t))
 print("timesteps: " + str(time_steps))
@@ -264,5 +266,4 @@ if(basis==3):
 else:
 	print("             " + "square")
 
-np.save('lattice_x.npy', x_obst1)
-np.save('lattice_y.npy', y_obst1)
+
