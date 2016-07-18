@@ -24,6 +24,7 @@ do
 		fi
 		#echo "mkdir outputs/PDFs-N$noise-W$omega"
 		echo "cd outputs/PDFs-N$noise-W$omega"
+		echo "echo =============================== > out.txt"
 		i=0
 		eta=0
 		# this is just here to get the eta = 0 case

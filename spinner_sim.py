@@ -172,7 +172,7 @@ for i in range(0,MSDSpinners):
 			for N in range(200,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
 			MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
-		np.save('MSDshift' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
+		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
 '''
 #MSD vs delta Tau --------------------------------    
 	MSDtau=np.zeros(tauRes)
@@ -183,7 +183,7 @@ for i in range(0,MSDSpinners):
 			MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
 		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		#print(MSDtau[t])
-	np.save('MSDtau' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
+	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
 	'''
 
 #=======================================================================
@@ -219,7 +219,7 @@ plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
 plt.close()
-
+'''
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
@@ -237,8 +237,8 @@ for n in range(Nspinners):
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
 	#path[:,:]=x_vec
-	np.save('traj' + str(jobNum) + 'spinner_'+ str(n) + '.npy', x_vec)
-'''
+	np.save('traj_' + str(jobNum) + '_spinner_'+ str(n) + '.npy', x_vec)
+
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
@@ -248,6 +248,7 @@ print("Run Time : " + str(datetime.now() - startTime))
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
+print("MSDSpinners: " + str(MSDspinners))
 print("etaRes: " + str(etaRes) + " eta: " + str(eta))
 print("gamma:" + str(gamma_t))
 print("timesteps: " + str(time_steps))

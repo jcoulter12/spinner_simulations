@@ -2,10 +2,8 @@
 
 cd /Users/Donna/Desktop/test/Unslanted_Square/
 
-#mkdir PDFs_$(date '+%d-%b-%Y-%k-%M') 
-#cd PDFs_$(date '+%d-%b-%Y-%k-%M')
-mkdir PDFs_please1
-cd PDFs_please1
+mkdir PDFs_$(date +%d-%b-%Y-%H-%M) 
+cd PDFs_$(date +%d-%b-%Y-%H-%M) 
 
 nJobs=2
 i=0
