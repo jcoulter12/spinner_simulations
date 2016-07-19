@@ -15,12 +15,15 @@ basis=0
 lattice_constant=1
 Nposts=50
 shift=0
+tot_posts=Nposts*2*Nposts*2
+x_obst1=np.zeros((tot_posts)) 
+y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=1000
+time_steps=100
 Nspinners=5
 MSDSpinners=1
-tauRes=50
+tauRes=5
 shiftRes=11.0
 
 #FORCE ---------------
@@ -71,10 +74,9 @@ def lattice_generator():
 				if(j%2==1): #odd number row
 					xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)  
 			k+=1   
-	x_obst1=xsq1[:,0]*5
-	y_obst1=xsq1[:,1]*5
 	np.save('lattice_x_shift_' + str(shift) + '.npy', x_obst1)
 	np.save('lattice_y_shift_' + str(shift) + '.npy', y_obst1)
+	return xsq1[:,0]*5, xsq1[:,1]*5
 #=======================================================================
 # This creates either of the two defined lattice types
 #=======================================================================
@@ -85,11 +87,7 @@ if(basis==0): #Simple cubic primitive vectors
 if(basis==3): #Jahn Teller distorted created by shifting two square lattices
 	shift=0.25
 
-tot_posts=Nposts*2*Nposts*2
-x_obst1=np.zeros((tot_posts)) 
-y_obst1=np.zeros((tot_posts)) 
-lattice_generator()
-
+x_obst1,y_obst1=lattice_generator()
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================
@@ -117,7 +115,6 @@ def force_calc(vecx):
 			Fx+=0
 			Fy+=0
 	return Fx,Fy
-
 #=======================================================================
 # MEAN SQUARE DISPLACEMENT
 #=======================================================================
@@ -166,15 +163,12 @@ for i in range(0,MSDSpinners):
 	for s in range(0,(int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
 		shift=(float)(s/(shiftRes-1))
-		print(s)
-		print(s/shiftRes)
-		print(shiftRes)
 		print(shift)
-		lattice_generator()
+		x_obst1,y_obst1=lattice_generator()
 		x_path=force_calc_stub() 
 		for t in range(0,tauRes): 
 			tau=(t+1)*2
-			for N in range(200,time_steps-(tau)):
+			for N in range(20,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
 			MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
@@ -230,7 +224,8 @@ plt.close()
 #=======================================================================
 #path=np.zeros((time_steps,2))
 shift=0
-lattice_generator()
+x_obst1,y_obst1=lattice_generator()
+print(x_obst1)
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
@@ -238,6 +233,7 @@ for n in range(Nspinners):
 	xunit_vec=[1,0]
 	yunit_vec=[0,1]
 	for i in range(1,time_steps):
+		print(x_obst1)
 		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
