@@ -21,7 +21,7 @@ time_steps=1000
 Nspinners=5
 MSDSpinners=1
 tauRes=50
-shiftRes=10
+shiftRes=10.0
 
 #FORCE ---------------
 eta=0.1
