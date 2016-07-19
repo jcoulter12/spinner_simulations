@@ -166,7 +166,7 @@ for i in range(0,MSDSpinners):
 #MSD vs Tau (For Multiple Shifts) --------------------------------
 	for s in range(0,shiftRes):
 		MSDtau=np.zeros(tauRes)
-		shift=(double)(s/shiftRes)
+		shift=(float)(s/shiftRes)
 		print(shift)
 		lattice_generator()
 		x_path=force_calc_stub() 
