@@ -21,7 +21,7 @@ time_steps=1000
 Nspinners=5
 MSDSpinners=1
 tauRes=50
-shiftRes=10.0
+shiftRes=11.0
 
 #FORCE ---------------
 eta=0.1
@@ -96,7 +96,6 @@ lattice_generator()
 def force_calc(vecx): 
 	r_cube1=np.sqrt((vecx[0]-x_obst1)**2+(vecx[1]-y_obst1)**2)
 	Fx,Fy=0,0
-  
 	xm1=omega*(gamma_t*(vecx[0]-x_obst1)-eta*(vecx[1]-y_obst1)) 
 	ym1=omega*(gamma_t*(vecx[1]-y_obst1)+eta*(vecx[0]-x_obst1)) 
 	r=np.zeros((len(r_cube1),2))
@@ -230,7 +229,8 @@ plt.close()
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
 #path=np.zeros((time_steps,2))
-
+shift=0
+lattice_generator()
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))

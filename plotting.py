@@ -7,14 +7,14 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=5
-shiftRes=10
-Nspinners=3
+jobNum=4
+shiftRes=11.0
+Nspinners=1
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x.npy')
-y_obst1=np.load('lattice_y.npy')
+x_obst1=np.load('lattice_x_shift_0.9.npy')
+y_obst1=np.load('lattice_y_shift_0.9.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
@@ -27,7 +27,7 @@ plt.close()
 
 for i in range (0,jobNum):
 	#MSDeta[i,:]=np.load('MSDeta'+str(i)+'.npy')
-	MSDtau=np.load('MSDtau0spinner_0.npy')
+	MSDtau=np.load('MSDshift_0_spinner_0_shift_0.0.npy')
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -39,59 +39,62 @@ for i in range (0,jobNum):
 	x=np.log10(x_vals[:])
 	x[x_vals[:]==0]=0
 	colors = ['r','g','b']
-	for n in range(0,3): # number of MSD spinners
-		MSDtau=np.load('MSDtau'+str(i)+'spinner_' + str(n) + '.npy')
-		y=np.log10(MSDtau[:])
-		y[MSDtau[:]==0]=0
-		plt.scatter(x,y, color=colors[n])
+	# for n in range(0,Nspinners): # number of MSD spinners
+	# 	MSDtau=np.load('MSDtau'+str(i)+'spinner_' + str(n) + '.npy')
+	# 	y=np.log10(MSDtau[:])
+	# 	y[MSDtau[:]==0]=0
+	# 	plt.scatter(x,y, color=colors[n])
 
-		z = np.polyfit(x, y, 1)
-		p = z[0]*x + z[1] 
-		plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
-		ax = plt.gca()
-		#ax.text(2,n,('y=%.6fx+(%.6f)'%(z[0],z[1])))
-		print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
+	# 	z = np.polyfit(x, y, 1)
+	# 	p = z[0]*x + z[1] 
+	# 	plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
+	# 	ax = plt.gca()
+	# 	#ax.text(2,n,('y=%.6fx+(%.6f)'%(z[0],z[1])))
+	# 	print("MSDtau Fit: y=%.6fx+(%.6f)"%(z[0],z[1]))
 
-		#do linear fit: log(y) = p(1) * log(x) + p(2)
-		p = np.polyfit(x, y, 1)
+	# 	#do linear fit: log(y) = p(1) * log(x) + p(2)
+	# 	p = np.polyfit(x, y, 1)
 
-		#retrieve original parameters
-		tau = p[0]
-		k = np.exp(p[1])
-		#print("MSDtau Exp Fit: y=%.6fx^(%.6f)"%(k,tau))
-		#plt.loglog(x_vals, MSDtau[n], '.')
-		#plt.loglog(x_vals, k*x_vals**tau, 'r')
-	plt.legend(loc='upper left')
-	plt.savefig("MSDtau_"+ str(i) + ".pdf")
-	plt.close()
+	# 	#retrieve original parameters
+	# 	tau = p[0]
+	# 	k = np.exp(p[1])
+	# 	#print("MSDtau Exp Fit: y=%.6fx^(%.6f)"%(k,tau))
+	# 	#plt.loglog(x_vals, MSDtau[n], '.')
+	# 	#plt.loglog(x_vals, k*x_vals**tau, 'r')
+	# plt.legend(loc='upper left')
+	# plt.savefig("MSDtau_"+ str(i) + ".pdf")
+	# plt.close()
 #=======================================================================
 # PLOT MSD vs delta tau WITH SHIFT
 #=======================================================================
-#	for p in range(shiftRes): #shiftRes range
-#		shift=p/shiftRes
-#		MSDtau=np.load('MSDshift' + str(jobNum) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
-#		y=np.log10(MSDtau[n,:])
-#		y[MSDtau[n,:]==0]=0
-#		plt.scatter(x,y) # add the color in the form of p, a number
-#		
-#		#put some kind of legend here 
-#
-#		#the fit goes here
-#		z = np.polyfit(x, y, 1)
-#		p = z[0]*x + z[1] 
-#		plt.plot(x,p[:],"r--")
-#		print("MSDtau anomaly param, shift of %.6f: m=%.6fx"%(shift,z[0]))
-#	plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
+	for n in range(0,Nspinners): # number of MSD spinners
+		for p in range((int)(shiftRes)): #shiftRes range
+			shift=p/shiftRes
+			MSDtau=np.load('MSDshift_' + str(i) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
+			y=np.log10(MSDtau[:])
+			y[MSDtau[:]==0]=0
+			plt.scatter(x,y) 
+		
+			#put some kind of legend here 
+
+			#the fit goes here
+			z = np.polyfit(x, y, 1)
+			p = z[0]*x + z[1] 
+			plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
+			print("MSDtau anomaly param, shift of %.2f: m=%.6fx"%(shift,z[0]))
+		plt.legend(loc='upper left')
+		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
+		print("====================================================")
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-	time_steps=len(np.load('traj0spinner_0.npy') )
+	time_steps=len(np.load('traj_0_spinner_0.npy'))
 	#plt.title("")
 	plt.figure(figsize=((10,10))) 
 	cm=plt.cm.get_cmap('rainbow')
 	t=range(time_steps)
-	for n in range(0,Nspinners): # load in all the paths
-		path=np.load('traj' + str(i) + 'spinner_' + str(n) + '.npy') 
+	for n in range(0,5): # load in all the paths
+		path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
 		#            cmap=cm,
