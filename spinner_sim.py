@@ -165,7 +165,7 @@ for i in range(0,MSDSpinners):
 #MSD vs Tau (For Multiple Shifts) --------------------------------
 	for s in range(0,(int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
-		shift=(float)(s/shiftRes)
+		shift=(float)(s/(shiftRes-1))
 		print(s)
 		print(s/shiftRes)
 		print(shiftRes)

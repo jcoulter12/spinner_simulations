@@ -13,8 +13,8 @@ Nspinners=1
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x_shift_0.9.npy')
-y_obst1=np.load('lattice_y_shift_0.9.npy')
+x_obst1=np.load('lattice_x_shift_0.0.npy')
+y_obst1=np.load('lattice_y_shift_0.0.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
@@ -68,8 +68,8 @@ for i in range (0,jobNum):
 # PLOT MSD vs delta tau WITH SHIFT
 #=======================================================================
 	for n in range(0,Nspinners): # number of MSD spinners
-		for p in range((int)(shiftRes)): #shiftRes range
-			shift=p/shiftRes
+		for p in range((int)(shiftRes-1)): #shiftRes range
+			shift=p/(shiftRes-1)
 			MSDtau=np.load('MSDshift_' + str(i) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
 			y=np.log10(MSDtau[:])
 			y[MSDtau[:]==0]=0
@@ -81,7 +81,7 @@ for i in range (0,jobNum):
 			z = np.polyfit(x, y, 1)
 			p = z[0]*x + z[1] 
 			plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
-			print("MSDtau anomaly param, shift of %.2f: m=%.6fx"%(shift,z[0]))
+			print("MSDtau anomaly param, shift of %.1f: m=%.6fx"%(shift,z[0]))
 		plt.legend(loc='upper left')
 		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		print("====================================================")
