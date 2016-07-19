@@ -14,6 +14,7 @@ startTime = datetime.now()
 basis=0
 lattice_constant=1
 Nposts=50
+shift=0
 
 #TIME ----------------
 time_steps=1000
