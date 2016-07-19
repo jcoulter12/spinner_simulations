@@ -20,10 +20,10 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=100
+time_steps=1000
 Nspinners=5
 MSDSpinners=1
-tauRes=5
+tauRes=50
 shiftRes=11.0
 
 #FORCE ---------------
@@ -168,7 +168,7 @@ for i in range(0,MSDSpinners):
 		x_path=force_calc_stub() 
 		for t in range(0,tauRes): 
 			tau=(t+1)*2
-			for N in range(20,time_steps-(tau)):
+			for N in range(200,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
 			MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
