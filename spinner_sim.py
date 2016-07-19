@@ -164,7 +164,7 @@ for i in range(0,MSDSpinners):
 	np.save('MSDshift' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDshift) 
 	'''
 #MSD vs Tau (For Multiple Shifts) --------------------------------
-	for s in range(0,shiftRes):
+	for s in range(0,(int)shiftRes):
 		MSDtau=np.zeros(tauRes)
 		shift=(float)(s/shiftRes)
 		print(s)
