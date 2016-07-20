@@ -20,11 +20,11 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=1000
+time_steps=10000
 Nspinners=5
-MSDSpinners=1
-tauRes=50
-shiftRes=11.0
+MSDSpinners=3
+tauRes=100
+shiftRes=101.0
 
 #FORCE ---------------
 eta=0.1
@@ -163,14 +163,14 @@ for i in range(0,MSDSpinners):
 	for s in range(0,(int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
 		shift=(float)(s/(shiftRes-1))
-		print(shift)
+		#print(shift)
 		x_obst1,y_obst1=lattice_generator()
 		x_path=force_calc_stub() 
 		for t in range(0,tauRes): 
-			tau=(t+1)*2
-			for N in range(200,time_steps-(tau)):
+			tau=(t+1)*5
+			for N in range(500,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-			MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
+			MSDtau[t]=MSDtau[t]/(time_steps-500-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
 '''
 #MSD vs delta Tau --------------------------------    

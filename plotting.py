@@ -7,7 +7,7 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=4
+jobNum=5
 shiftRes=11.0
 Nspinners=1
 #=======================================================================
@@ -67,24 +67,35 @@ for i in range (0,jobNum):
 #=======================================================================
 # PLOT MSD vs delta tau WITH SHIFT
 #=======================================================================
+	MSDshift=np.zeros((Nspinners,(shiftRes-1),2))
 	for n in range(0,Nspinners): # number of MSD spinners
-		for p in range((int)(shiftRes-1)): #shiftRes range
-			shift=p/(shiftRes-1)
+		for s in range((int)(shiftRes-1)): #shiftRes range
+			shift=s/(shiftRes-1)
 			MSDtau=np.load('MSDshift_' + str(i) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
 			y=np.log10(MSDtau[:])
 			y[MSDtau[:]==0]=0
 			plt.scatter(x,y) 
-		
-			#put some kind of legend here 
 
 			#the fit goes here
 			z = np.polyfit(x, y, 1)
 			p = z[0]*x + z[1] 
 			plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
-			print("MSDtau anomaly param, shift of %.1f: m=%.6fx"%(shift,z[0]))
+			print("MSDtau anomaly param, shift of %.1f: m=%.6f"%(shift,z[0]))
+
+			#save the values so that we can plot slope vs shift
+			MSDshift[n,s,0]=shift
+			MSDshift[n,s,1]=z[0]
+
 		plt.legend(loc='upper left')
 		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		print("====================================================")
+		plt.close()
+#=======================================================================
+# MSD Slope vs Shift Value
+#=======================================================================
+		plt.scatter(MSDshift[n,:,0],MSDshift[n,:,1],color=colors[n])
+		plt.savefig("MSDslope_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
+		plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
