@@ -31,14 +31,14 @@ for i in range (0,jobNum):
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
-	x_vals=np.zeros(len(MSDtau))
-	for u in range(0,len(MSDtau)):
-		x_vals[u]=(u+1)*2
-	plt.ylabel('(MSD)')
-	plt.xlabel('(delta tau)')
-	x=np.log10(x_vals[:])
-	x[x_vals[:]==0]=0
-	colors = ['r','g','b']
+	# x_vals=np.zeros(len(MSDtau))
+	# for u in range(0,len(MSDtau)):
+	# 	x_vals[u]=(u+1)*2
+	# plt.ylabel('(MSD)')
+	# plt.xlabel('(delta tau)')
+	# x=np.log10(x_vals[:])
+	# x[x_vals[:]==0]=0
+	# colors = ['r','g','b']
 	# for n in range(0,Nspinners): # number of MSD spinners
 	# 	MSDtau=np.load('MSDtau'+str(i)+'spinner_' + str(n) + '.npy')
 	# 	y=np.log10(MSDtau[:])
@@ -67,62 +67,70 @@ for i in range (0,jobNum):
 #=======================================================================
 # PLOT MSD vs delta tau WITH SHIFT
 #=======================================================================
-	MSDshift=np.zeros((Nspinners,(shiftRes-1),2))
-	for n in range(0,Nspinners): # number of MSD spinners
-		for s in range((int)(shiftRes-1)): #shiftRes range
-			shift=s/(shiftRes-1)
-			MSDtau=np.load('MSDshift_' + str(i) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
-			y=np.log10(MSDtau[:])
-			y[MSDtau[:]==0]=0
-			plt.scatter(x,y) 
+	# MSDshift=np.zeros((Nspinners,(shiftRes-1),2))
+	# for n in range(0,Nspinners): # number of MSD spinners
+	# 	for s in range((int)(shiftRes-1)): #shiftRes range
+	# 		shift=s/(shiftRes-1)
+	# 		MSDtau=np.load('MSDshift_' + str(i) + '_spinner_' + str(n) + "_shift_" + str(shift) + '.npy')
+	# 		y=np.log10(MSDtau[:])
+	# 		y[MSDtau[:]==0]=0
+	# 		plt.scatter(x,y) 
 
-			#the fit goes here
-			z = np.polyfit(x, y, 1)
-			p = z[0]*x + z[1] 
-			plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
-			print("MSDtau anomaly param, shift of %.1f: m=%.6f"%(shift,z[0]))
+	# 		#the fit goes here
+	# 		z = np.polyfit(x, y, 1)
+	# 		p = z[0]*x + z[1] 
+	# 		plt.plot(x,p[:],"--",color=colors[n],label=('y=%.6fx+(%.6f)'%(z[0],z[1])))
+	# 		print("MSDtau anomaly param, shift of %.1f: m=%.6f"%(shift,z[0]))
 
-			#save the values so that we can plot slope vs shift
-			MSDshift[n,s,0]=shift
-			MSDshift[n,s,1]=z[0]
+	# 		#save the values so that we can plot slope vs shift
+	# 		MSDshift[n,s,0]=shift
+	# 		MSDshift[n,s,1]=z[0]
 
-		plt.legend(loc='upper left')
-		plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
-		print("====================================================")
-		plt.close()
+	# 	plt.legend(loc='upper left')
+	# 	plt.savefig("MSDtau_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
+	# 	print("====================================================")
+	# 	plt.close()
+#=======================================================================
+# MSD vs Shift Value
+#=======================================================================
+	MSDshift=np.load('MSDshift0spinner_0.npy')
+	print(MSDshift)
+	plt.scatter((np.arange(0,101))/100, MSDshift[:])
+	plt.savefig("MSDshift_"+ str(i) + ".pdf")
+	plt.close()
 #=======================================================================
 # MSD Slope vs Shift Value
 #=======================================================================
-		plt.scatter(MSDshift[n,:,0],MSDshift[n,:,1],color=colors[n])
-		plt.savefig("MSDslope_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
-		plt.close()
+		# plt.scatter(MSDshift[n,:,0],MSDshift[n,:,1],color=colors[n])
+		# plt.savefig("MSDshift_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
+		# plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
-#=======================================================================
-	time_steps=len(np.load('traj_0_spinner_0.npy'))
-	#plt.title("")
-	plt.figure(figsize=((10,10))) 
-	cm=plt.cm.get_cmap('rainbow')
-	t=range(time_steps)
-	for n in range(0,5): # load in all the paths
-		path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
-		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
-		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
-		#            cmap=cm,
-		#            scale=10000
-		#            )
-		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
-		sc=plt.scatter(path[:,0],path[:,1], 
-									c=t, 
-									vmin=0, 
-									vmax=time_steps, 
-									s=30,
-									edgecolors='none',
-									cmap=cm
-									)
-	plt.xlim(-50,50)
-	plt.ylim(-50,50)
-	plt.savefig("traj" + str(i) + ".png")
-	plt.close()
+# #=======================================================================
+# 	time_steps=len(np.load('traj_0_spinner_0.npy'))
+# 	#plt.title("")
+# 	plt.figure(figsize=((10,10))) 
+# 	cm=plt.cm.get_cmap('rainbow')
+# 	t=range(time_steps)
+# 	for n in range(0,5): # load in all the paths
+# 		path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
+# 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
+# 		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
+# 		#            cmap=cm,
+# 		#            scale=10000
+# 		#            )
+# 		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+# 		sc=plt.scatter(path[:,0],path[:,1], 
+# 									c=t, 
+# 									vmin=0, 
+# 									vmax=time_steps, 
+# 									s=30,
+# 									edgecolors='none',
+# 									cmap=cm
+# 									)
+# 	plt.xlim(-50,50)
+# 	plt.ylim(-50,50)
+# 	plt.savefig("traj" + str(i) + ".png")
+# 	plt.close()
 	
 print("done!")

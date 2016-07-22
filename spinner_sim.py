@@ -20,10 +20,10 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=10000
-Nspinners=5
-MSDSpinners=3
-tauRes=100
+time_steps=1000
+Nspinners=1
+MSDSpinners=1
+tauRes=50
 shiftRes=101.0
 
 #FORCE ---------------
@@ -145,35 +145,36 @@ for i in range(0,MSDSpinners):
 			MSDeta[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
 		MSDeta[i,j]=MSDeta[i,j]/(time-10)
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-
+'''
 #MSD vs Shift -------------------------------- 
 	#This will take forever because of path calculation ... 
-	tau=1
-	MSDshift=np.zeros(shiftRes)
-	for s in range(0,shiftRes):
+	tau=5
+	MSDshift=np.zeros((int)(shiftRes))
+	for s in range(0,(int)(shiftRes)):
 		shift=s/shiftRes
-		lattice_shift()
+		x_obst1,y_obst1=lattice_generator()
 		x_path=force_calc_stub() #How can I do better than this...? 
-		for N in range(200,time-tau):
+		for N in range(200,time_steps-tau):
 			MSDshift[s]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-		MSDeta[s]=MSDeta[s]/(time-10)
-	np.save('MSDshift' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDshift) 
-	'''
+		MSDshift[s]=MSDshift[s]/(time_steps-200)
+		print("done: " + str(s))
+	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
+'''
 #MSD vs Tau (For Multiple Shifts) --------------------------------
 	for s in range(0,(int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
 		shift=(float)(s/(shiftRes-1))
-		#print(shift)
+		print(shift)
 		x_obst1,y_obst1=lattice_generator()
 		x_path=force_calc_stub() 
 		for t in range(0,tauRes): 
 			tau=(t+1)*5
-			for N in range(500,time_steps-(tau)):
+			for N in range(50,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-			MSDtau[t]=MSDtau[t]/(time_steps-500-(tau-1))
+			MSDtau[t]=MSDtau[t]/(time_steps-50-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
-'''
-#MSD vs delta Tau --------------------------------    
+
+#MSD vs delta Tau -------------------------------- ---> for averaging, maybe in plotting, take the outputs and merge them... (summing each MSD value)/delta tau value 
 	MSDtau=np.zeros(tauRes)
 	x_path=force_calc_stub() 
 	for t in range(0,tauRes): 
@@ -225,7 +226,6 @@ plt.close()
 #path=np.zeros((time_steps,2))
 shift=0
 x_obst1,y_obst1=lattice_generator()
-print(x_obst1)
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
@@ -233,7 +233,6 @@ for n in range(Nspinners):
 	xunit_vec=[1,0]
 	yunit_vec=[0,1]
 	for i in range(1,time_steps):
-		print(x_obst1)
 		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
