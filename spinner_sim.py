@@ -20,9 +20,9 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=1000
+time_steps=10000
 Nspinners=1
-MSDSpinners=1
+MSDSpinners=3
 tauRes=50
 shiftRes=101.0
 
@@ -30,7 +30,7 @@ shiftRes=101.0
 eta=0.1
 #omega=100.0
 Nres=30
-dt=10**-3
+dt=10**-2
 noise=0
 etaRes=0.01
 
@@ -74,8 +74,8 @@ def lattice_generator():
 				if(j%2==1): #odd number row
 					xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)  
 			k+=1   
-	np.save('lattice_x_shift_' + str(shift) + '.npy', x_obst1)
-	np.save('lattice_y_shift_' + str(shift) + '.npy', y_obst1)
+	np.save('lattice_x_shift_' + str(shift) + '.npy', xsq1[:,0]*5)
+	np.save('lattice_y_shift_' + str(shift) + '.npy', xsq1[:,1]*5)
 	return xsq1[:,0]*5, xsq1[:,1]*5
 #=======================================================================
 # This creates either of the two defined lattice types
@@ -124,13 +124,13 @@ def force_calc_stub():
 	f_vec=np.zeros((time_steps,2))
 	x_vec[0,:]=np.random.randn(2)*10 
 	for i in range(1,time_steps):
-		#x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*np.sqrt(dt)
 		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
-		x_ens[0,:,:]=x_vec
-	return x_ens
+		#x_ens[0,:,:]=x_vec
+	#print(x_vec)
+	return x_vec
 #========================================================================
 for i in range(0,MSDSpinners):
 	'''
@@ -151,13 +151,13 @@ for i in range(0,MSDSpinners):
 	tau=5
 	MSDshift=np.zeros((int)(shiftRes))
 	for s in range(0,(int)(shiftRes)):
-		shift=s/shiftRes
+		shift=s/(shiftRes-1)
 		x_obst1,y_obst1=lattice_generator()
-		x_path=force_calc_stub() #How can I do better than this...? 
+		x_path=force_calc_stub() 
+		np.save('traj_' + str(jobNum) + '_shift_'+ str(s) + '.npy', x_path)
 		for N in range(200,time_steps-tau):
-			MSDshift[s]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-		MSDshift[s]=MSDshift[s]/(time_steps-200)
-		print("done: " + str(s))
+			MSDshift[s]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
+		MSDshift[s]=MSDshift[s]/(time_steps-200-tau-1)
 	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
 '''
 #MSD vs Tau (For Multiple Shifts) --------------------------------

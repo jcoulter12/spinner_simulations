@@ -8,7 +8,7 @@ from time import strftime
 import matplotlib.cm as cm
 
 jobNum=5
-shiftRes=11.0
+shiftRes=101.0
 Nspinners=1
 #=======================================================================
 # PLOT THE LATTICE 
@@ -27,7 +27,7 @@ plt.close()
 
 for i in range (0,jobNum):
 	#MSDeta[i,:]=np.load('MSDeta'+str(i)+'.npy')
-	MSDtau=np.load('MSDshift_0_spinner_0_shift_0.0.npy')
+	#MSDtau=np.load('MSDshift_0_spinner_0_shift_0.0.npy')
 #=======================================================================
 # PLOT MSD vs delta tau
 #=======================================================================
@@ -93,9 +93,9 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Shift Value
 #=======================================================================
-	MSDshift=np.load('MSDshift0spinner_0.npy')
-	print(MSDshift)
-	plt.scatter((np.arange(0,101))/100, MSDshift[:])
+	MSDshift=np.load('MSDshift_0_spinner_0.npy')
+	#print(MSDshift)
+	plt.scatter((np.arange(0,shiftRes))/100, MSDshift[:])
 	plt.savefig("MSDshift_"+ str(i) + ".pdf")
 	plt.close()
 #=======================================================================
@@ -106,31 +106,33 @@ for i in range (0,jobNum):
 		# plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
-# #=======================================================================
-# 	time_steps=len(np.load('traj_0_spinner_0.npy'))
-# 	#plt.title("")
-# 	plt.figure(figsize=((10,10))) 
-# 	cm=plt.cm.get_cmap('rainbow')
-# 	t=range(time_steps)
-# 	for n in range(0,5): # load in all the paths
-# 		path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
-# 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
-# 		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
-# 		#            cmap=cm,
-# 		#            scale=10000
-# 		#            )
-# 		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
-# 		sc=plt.scatter(path[:,0],path[:,1], 
-# 									c=t, 
-# 									vmin=0, 
-# 									vmax=time_steps, 
-# 									s=30,
-# 									edgecolors='none',
-# 									cmap=cm
-# 									)
-# 	plt.xlim(-50,50)
-# 	plt.ylim(-50,50)
-# 	plt.savefig("traj" + str(i) + ".png")
-# 	plt.close()
+#=======================================================================
+	time_steps=len(np.load('traj_0_shift_0.npy'))
+	#plt.title("")
+	plt.figure(figsize=((10,10))) 
+	cm=plt.cm.get_cmap('rainbow')
+	t=range(1000)
+	for n in range(0,5): # load in all the paths
+		path=np.load("traj_0_spinner_0.npy")
+		print(path)
+		#path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
+		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
+		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
+		#            cmap=cm,
+		#            scale=10000
+		#            )
+		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+		sc=plt.scatter(path[:,0],path[:,1], 
+									#c=t, 
+									vmin=0, 
+									vmax=time_steps, 
+									s=30,
+									edgecolors='none',
+									cmap=cm
+									)
+	plt.xlim(-50,50)
+	plt.ylim(-50,50)
+	plt.savefig("traj" + str(i) + ".png")
+	plt.close()
 	
 print("done!")
