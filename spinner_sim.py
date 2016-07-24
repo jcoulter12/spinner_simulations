@@ -11,7 +11,7 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=0
+basis=3
 lattice_constant=1
 Nposts=50
 shift=0
@@ -20,18 +20,16 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=10000
-Nspinners=1
+time_steps=100000
+Nspinners=5
 MSDSpinners=1
 tauRes=50
 shiftRes=101.0
+etaRes=100.0
 
 #FORCE ---------------
-eta=0.1
 Nres=30
-dt=10**-2
-noise=0
-etaRes=100.0
+dt=10**-3
 
 script,jobNum, noise, eta, omega = argv
 eta=float(eta)
@@ -131,8 +129,8 @@ def force_calc_stub():
 	#print(x_vec)
 	return x_vec
 #========================================================================
-for i in range(0,MSDSpinners):
-
+#for i in range(0,MSDSpinners):
+'''
 #MSD vs Eta -------------------------------- 
 	MSDeta=np.zeros((int)(etaRes))
 	for j in range((int)(etaRes)): 
@@ -145,7 +143,7 @@ for i in range(0,MSDSpinners):
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
 		print("done: " + str(j))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-'''
+
 #MSD vs Shift -------------------------------- 
 	#This will take forever because of path calculation ... 
 	tau=5
@@ -223,7 +221,6 @@ plt.close()
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-#path=np.zeros((time_steps,2))
 shift=0
 x_obst1,y_obst1=lattice_generator()
 for n in range(Nspinners):
