@@ -4,4 +4,5 @@ outputs/
 *.txt
 ss.py
 .DS_Store
+*.png
 

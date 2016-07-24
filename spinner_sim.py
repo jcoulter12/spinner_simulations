@@ -22,17 +22,16 @@ y_obst1=np.zeros((tot_posts))
 #TIME ----------------
 time_steps=10000
 Nspinners=1
-MSDSpinners=3
+MSDSpinners=1
 tauRes=50
 shiftRes=101.0
 
 #FORCE ---------------
 eta=0.1
-#omega=100.0
 Nres=30
 dt=10**-2
 noise=0
-etaRes=0.01
+etaRes=100.0
 
 script,jobNum, noise, eta, omega = argv
 eta=float(eta)
@@ -133,17 +132,18 @@ def force_calc_stub():
 	return x_vec
 #========================================================================
 for i in range(0,MSDSpinners):
-	'''
+
 #MSD vs Eta -------------------------------- 
-	MSDeta=np.zeros((int)(1/etaRes))
-	for j in range(0,(int)(1/etaRes)): 
-		tau=1
-		eta=j*etaRes
+	MSDeta=np.zeros((int)(etaRes))
+	for j in range((int)(etaRes)): 
+		tau=5
+		eta=j/etaRes
 		gamma=1-eta
 		x_path=force_calc_stub()
-		for N in range(200,time-tau):
-			MSDeta[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-		MSDeta[i,j]=MSDeta[i,j]/(time-10)
+		for N in range(200,time_steps-tau):
+			MSDeta[j]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
+		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
+		print("done: " + str(j))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
 '''
 #MSD vs Shift -------------------------------- 
@@ -159,7 +159,7 @@ for i in range(0,MSDSpinners):
 			MSDshift[s]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
 		MSDshift[s]=MSDshift[s]/(time_steps-200-tau-1)
 	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
-'''
+
 #MSD vs Tau (For Multiple Shifts) --------------------------------
 	for s in range(0,(int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)

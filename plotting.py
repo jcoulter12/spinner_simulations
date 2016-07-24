@@ -9,6 +9,7 @@ import matplotlib.cm as cm
 
 jobNum=5
 shiftRes=101.0
+etaRes=100.0
 Nspinners=1
 #=======================================================================
 # PLOT THE LATTICE 
@@ -93,17 +94,24 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Shift Value
 #=======================================================================
-	MSDshift=np.load('MSDshift_0_spinner_0.npy')
+	#MSDshift=np.load('MSDshift_0_spinner_0.npy')
 	#print(MSDshift)
-	plt.scatter((np.arange(0,shiftRes))/100, MSDshift[:])
-	plt.savefig("MSDshift_"+ str(i) + ".pdf")
-	plt.close()
+	#plt.scatter((np.arange(0,shiftRes))/100, MSDshift[:])
+	#plt.savefig("MSDshift_"+ str(i) + ".pdf")
+	#plt.close()
 #=======================================================================
 # MSD Slope vs Shift Value
 #=======================================================================
 		# plt.scatter(MSDshift[n,:,0],MSDshift[n,:,1],color=colors[n])
 		# plt.savefig("MSDshift_"+ str(i) + "_spinner#" + str(n)+ ".pdf")
 		# plt.close()
+#=======================================================================
+# MSD vs Eta
+#=======================================================================
+	MSDeta=np.load('MSDeta0spinner_0.npy')
+	plt.scatter((np.arange(etaRes))/100, MSDeta[:])
+	plt.savefig("MSDeta_"+ str(i) + ".pdf")
+	plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
@@ -114,7 +122,7 @@ for i in range (0,jobNum):
 	t=range(1000)
 	for n in range(0,5): # load in all the paths
 		path=np.load("traj_0_spinner_0.npy")
-		print(path)
+		#print(path)
 		#path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
