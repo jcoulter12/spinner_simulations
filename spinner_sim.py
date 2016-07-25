@@ -22,10 +22,11 @@ y_obst1=np.zeros((tot_posts))
 #TIME ----------------
 time_steps=10000
 Nspinners=5
-MSDSpinners=1
+MSDSpinners=3
 tauRes=50
 shiftRes=101.0
-etaRes=100.0
+etaRes=1000.0
+noiseRes=10.0
 
 #FORCE ---------------
 Nres=30
@@ -131,6 +132,25 @@ def force_calc_stub():
 #========================================================================
 for i in range(0,MSDSpinners):
 #MSD vs Eta -------------------------------- 
+	count=0
+	MSDnoise=np.zeros(((int)(noiseRes*2),2))
+	for j in range((int)(noiseRes*2)): 
+		tau=5
+		if(j<10): #decimal values
+			noise=j/10
+		else: # integers 1 -> 10
+			count+=1
+			noise=count
+		MSDnoise[j,0]=noise
+		x_path=force_calc_stub()
+		for N in range(200,time_steps-tau):
+			MSDnoise[j,1]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
+		MSDnoise[j,1]=MSDnoise[j,1]/(time_steps-200-tau-1)
+		print("done: " + str(noise))
+	np.save('MSDnoise' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDnoise)
+
+'''
+#MSD vs Eta -------------------------------- 
 	MSDeta=np.zeros((int)(etaRes))
 	for j in range((int)(etaRes)): 
 		tau=5
@@ -142,7 +162,7 @@ for i in range(0,MSDSpinners):
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
 		print("done: " + str(eta))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-'''
+
 #MSD vs Shift -------------------------------- 
 	#This will take forever because of path calculation ... 
 	tau=5

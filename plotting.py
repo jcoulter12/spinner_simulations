@@ -108,12 +108,23 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Eta
 #=======================================================================
-	MSDeta=np.load('MSDeta0spinner_0.npy')
-	plt.scatter((np.arange(etaRes))/100, MSDeta[:])
+	# MSDeta=np.load('MSDeta0spinner_0.npy')
+	# plt.scatter((np.arange(etaRes))/(etaRes), MSDeta[:])
+	# plt.title('MSD vs Eta for 100 values of eta, 0 -> 1, timesteps=10000, dt = 0.01')
+	# plt.ylabel('MSD')
+	# plt.xlabel('eta')
+	# plt.savefig("MSDeta_"+ str(i) + ".pdf")
+	# #print(MSDeta)
+	# plt.close()
+#=======================================================================
+# MSD vs Noise
+#=======================================================================
+	MSDnoise=np.load('MSDnoise0spinner_0.npy')
+	plt.scatter(MSDnoise[:,0], MSDnoise[:,1])
+	plt.title('MSD vs Noise for 20 values of noise, 0 -> 10, timesteps=1000, dt = 0.01')
 	plt.ylabel('MSD')
-	plt.xlabel('eta')
-	plt.savefig("MSDeta_"+ str(i) + ".pdf")
-	#print(MSDeta)
+	plt.xlabel('Noise')
+	plt.savefig("MSDnoise_"+ str(i) + ".pdf")
 	plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
