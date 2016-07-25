@@ -94,11 +94,13 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Shift Value
 #=======================================================================
-	#MSDshift=np.load('MSDshift_0_spinner_0.npy')
-	#print(MSDshift)
-	#plt.scatter((np.arange(0,shiftRes))/100, MSDshift[:])
-	#plt.savefig("MSDshift_"+ str(i) + ".pdf")
-	#plt.close()
+	# MSDshift=np.load('MSDshift_0_spinner_0.npy')
+	# plt.title('MSD vs Shift for 100 values of shift, 0 -> 1, timesteps=1000, dt = 0.01')
+	# plt.scatter((np.arange(0,shiftRes))/100, MSDshift[:])
+	# plt.ylabel('MSD')
+	# plt.xlabel('shift')
+	# plt.savefig("MSDshift_"+ str(i) + ".pdf")
+	# plt.close()
 #=======================================================================
 # MSD Slope vs Shift Value
 #=======================================================================
