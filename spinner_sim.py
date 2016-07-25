@@ -11,16 +11,16 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=3
+basis=0
 lattice_constant=1
 Nposts=50
-shift=0
+shift=0.0
 tot_posts=Nposts*2*Nposts*2
 x_obst1=np.zeros((tot_posts)) 
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=100000
+time_steps=10000
 Nspinners=5
 MSDSpinners=1
 tauRes=50
@@ -29,7 +29,7 @@ etaRes=100.0
 
 #FORCE ---------------
 Nres=30
-dt=10**-3
+dt=10**-2
 
 script,jobNum, noise, eta, omega = argv
 eta=float(eta)
@@ -129,8 +129,7 @@ def force_calc_stub():
 	#print(x_vec)
 	return x_vec
 #========================================================================
-#for i in range(0,MSDSpinners):
-'''
+for i in range(0,MSDSpinners):
 #MSD vs Eta -------------------------------- 
 	MSDeta=np.zeros((int)(etaRes))
 	for j in range((int)(etaRes)): 
@@ -141,9 +140,9 @@ def force_calc_stub():
 		for N in range(200,time_steps-tau):
 			MSDeta[j]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
-		print("done: " + str(j))
+		print("done: " + str(eta))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-
+'''
 #MSD vs Shift -------------------------------- 
 	#This will take forever because of path calculation ... 
 	tau=5

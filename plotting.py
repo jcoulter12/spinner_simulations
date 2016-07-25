@@ -14,8 +14,8 @@ Nspinners=1
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x_shift_0.0.npy')
-y_obst1=np.load('lattice_y_shift_0.0.npy')
+x_obst1=np.load('lattice_x_shift_0.npy')
+y_obst1=np.load('lattice_y_shift_0.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
@@ -110,12 +110,16 @@ for i in range (0,jobNum):
 #=======================================================================
 	MSDeta=np.load('MSDeta0spinner_0.npy')
 	plt.scatter((np.arange(etaRes))/100, MSDeta[:])
+	plt.ylabel('MSD')
+	plt.xlabel('eta')
 	plt.savefig("MSDeta_"+ str(i) + ".pdf")
+	#print(MSDeta)
 	plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-	time_steps=len(np.load('traj_0_shift_0.npy'))
+	#time_steps=len(np.load('traj_0_shift_0.npy'))
+	time_steps=len(np.load('traj_0_spinner_0.npy'))
 	#plt.title("")
 	plt.figure(figsize=((10,10))) 
 	cm=plt.cm.get_cmap('rainbow')
