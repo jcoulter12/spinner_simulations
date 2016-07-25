@@ -21,16 +21,16 @@ y_obst1=np.zeros((tot_posts))
 
 #TIME ----------------
 time_steps=10000
-Nspinners=1
-MSDSpinners=1
+Nspinners=5
+MSDSpinners=0
 tauRes=50
 shiftRes=101.0
 etaRes=100.0
-noiseRes=60.0
+noiseRes=20.0
 
 #FORCE ---------------
 Nres=30
-dt=10**-2
+dt=10**-3
 
 script,jobNum, noise, eta, omega = argv
 eta=float(eta)
@@ -38,8 +38,8 @@ noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
 #to be sure the path is visible afterwards
-if(omega==1000):
-	dt=dt/100.0
+if(((int)(omega))==1000):
+	dt=10**-5
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
@@ -133,17 +133,17 @@ def force_calc_stub():
 for i in range(0,MSDSpinners):
 
 #MSD vs Noise -------------------------------- 
-	count=0
+	count=40
 	MSDnoise=np.zeros(((int)(noiseRes),2))
 	for j in range((int)(noiseRes)): 
 		tau=5
-		if(j<10): #decimal values
-			noise=j/10.0
+		#if(j<10): #decimal values
+			#noise=j/10.0
 			#noise=count/10.0
 			#count+=1
-		else: # integers 1 -> 10
-			count+=1
-			noise=count
+		#else: # integers 1 -> 10
+		count+=1
+		noise=count
 		MSDnoise[j,0]=noise
 		x_path=force_calc_stub()
 		for N in range(200,time_steps-tau):
@@ -243,7 +243,7 @@ plt.close()
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-shift=0
+#shift=0
 x_obst1,y_obst1=lattice_generator()
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
