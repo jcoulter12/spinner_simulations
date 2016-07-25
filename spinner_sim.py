@@ -21,12 +21,12 @@ y_obst1=np.zeros((tot_posts))
 
 #TIME ----------------
 time_steps=10000
-Nspinners=5
+Nspinners=1
 MSDSpinners=1
 tauRes=50
 shiftRes=101.0
 etaRes=100.0
-noiseRes=30.0
+noiseRes=60.0
 
 #FORCE ---------------
 Nres=30
@@ -131,18 +131,19 @@ def force_calc_stub():
 	return x_vec
 #========================================================================
 for i in range(0,MSDSpinners):
-	'''
+
 #MSD vs Noise -------------------------------- 
-	count=30
+	count=0
 	MSDnoise=np.zeros(((int)(noiseRes),2))
 	for j in range((int)(noiseRes)): 
 		tau=5
-		#if(j<10): #decimal values
-		noise=count/100.0
-		count+=1
-		#else: # integers 1 -> 10
+		if(j<10): #decimal values
+			noise=j/10.0
+			#noise=count/10.0
 			#count+=1
-			#noise=count
+		else: # integers 1 -> 10
+			count+=1
+			noise=count
 		MSDnoise[j,0]=noise
 		x_path=force_calc_stub()
 		for N in range(200,time_steps-tau):
@@ -164,7 +165,7 @@ for i in range(0,MSDSpinners):
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
 		print("done: " + str(eta))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-'''
+
 #MSD vs Shift -------------------------------- 
 	#This will take forever because of path calculation ... 
 	tau=5
