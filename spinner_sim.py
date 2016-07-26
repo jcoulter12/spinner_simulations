@@ -11,10 +11,10 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=0
+basis=3
 lattice_constant=1
 Nposts=50
-shift=0.0
+#shift=0.0
 tot_posts=Nposts*2*Nposts*2
 x_obst1=np.zeros((tot_posts)) 
 y_obst1=np.zeros((tot_posts)) 
