@@ -10,12 +10,12 @@ import matplotlib.cm as cm
 jobNum=5
 shiftRes=101.0
 etaRes=100.0
-Nspinners=1
+Nspinners=4
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x_shift_0.npy')
-y_obst1=np.load('lattice_y_shift_0.npy')
+x_obst1=np.load('lattice_x_shift_0.25.npy')
+y_obst1=np.load('lattice_y_shift_0.25.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
@@ -121,13 +121,13 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Noise
 #=======================================================================
-	MSDnoise=np.load('MSDnoise0spinner_0.npy')
-	plt.scatter(MSDnoise[:,0], MSDnoise[:,1])
-	plt.title('MSD vs Noise for 20 values of noise, 0.0 -> 1, timesteps=10000, dt = 0.001')
-	plt.ylabel('MSD')
-	plt.xlabel('Noise')
-	plt.savefig("MSDnoise_"+ str(i) + ".pdf")
-	plt.close()
+	# MSDnoise=np.load('MSDnoise0spinner_0.npy')
+	# plt.scatter(MSDnoise[:,0], MSDnoise[:,1])
+	# plt.title('MSD vs Noise for 20 values of noise, 0.0 -> 1, timesteps=10000, dt = 0.001')
+	# plt.ylabel('MSD')
+	# plt.xlabel('Noise')
+	# plt.savefig("MSDnoise_"+ str(i) + ".pdf")
+	# plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
@@ -136,9 +136,9 @@ for i in range (0,jobNum):
 	#plt.title("")
 	plt.figure(figsize=((10,10))) 
 	cm=plt.cm.get_cmap('rainbow')
-	t=range(1000)
-	for n in range(0,5): # load in all the paths
-		path=np.load("traj_0_spinner_0.npy")
+	t=range(time_steps)
+	for n in range(0,Nspinners): # load in all the paths
+		path=np.load("traj_" + str(i) + "_spinner_" + str(n) + ".npy")
 		#print(path)
 		#path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
@@ -148,7 +148,7 @@ for i in range (0,jobNum):
 		#            )
 		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
 		sc=plt.scatter(path[:,0],path[:,1], 
-									#c=t, 
+									c=t, 
 									vmin=0, 
 									vmax=time_steps, 
 									s=30,

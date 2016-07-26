@@ -1,5 +1,5 @@
 import numpy as np
-#from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 #import scipy.io as sio
 #import os
 #import math
@@ -20,17 +20,14 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=10000
-Nspinners=5
+time_steps=100000
+Nspinners=1
 MSDSpinners=0
-tauRes=50
-shiftRes=101.0
-etaRes=100.0
-noiseRes=20.0
+probRes=100.0
 
 #FORCE ---------------
 Nres=30
-dt=10**-3
+dt=10**-2
 
 script,jobNum, noise, eta, omega = argv
 eta=float(eta)
@@ -38,8 +35,8 @@ noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
 #to be sure the path is visible afterwards
-if(((int)(omega))==1000):
-	dt=10**-5
+#if(((int)(omega))==1000):
+#	dt=10**-5
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
@@ -55,26 +52,22 @@ def lattice_generator():
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					#xsq1[k,:]=((i+shift)*a1) + ((j+shift)*b1)
-					xsq1[k,:]=((i+shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i+shift)*a1) + ((j+shift)*b1)
 			if(i%4==1): #odd number column
 				if(j%2==0): #even number row
-					#xsq1[k,:]=((i-shift)*a1) + ((j-shift)*b1)
-					xsq1[k,:]=((i-shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i-shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row                 
 					xsq1[k,:]=(i*a1) + (j*b1)
 			if(i%4==2): #even number column
 				if(j%2==0): #even number row
-					#xsq1[k,:]=((i+shift)*a1) + ((j-shift)*b1)
-					xsq1[k,:]=((i+shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i+shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 			if(i%4==3): #odd number column
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					#xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)
-					xsq1[k,:]=((i-shift)*a1) + ((j)*b1)    
+					xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)  
 			k+=1   
 	np.save('lattice_x_shift_' + str(shift) + '.npy', xsq1[:,0]*5)
 	np.save('lattice_y_shift_' + str(shift) + '.npy', xsq1[:,1]*5)
@@ -117,98 +110,6 @@ def force_calc(vecx):
 			Fx+=0
 			Fy+=0
 	return Fx,Fy
-#=======================================================================
-# MEAN SQUARE DISPLACEMENT
-#=======================================================================
-def force_calc_stub():
-	x_ens=np.zeros((Nspinners,time_steps,2))
-	x_vec=np.zeros((time_steps,2))
-	f_vec=np.zeros((time_steps,2))
-	x_vec[0,:]=np.random.randn(2)*10 
-	for i in range(1,time_steps):
-		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
-		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
-		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
-		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:])
-		#x_ens[0,:,:]=x_vec
-	#print(x_vec)
-	return x_vec
-#========================================================================
-for i in range(0,MSDSpinners):
-'''
-#MSD vs Noise -------------------------------- 
-	count=40
-	MSDnoise=np.zeros(((int)(noiseRes),2))
-	for j in range((int)(noiseRes)): 
-		tau=5
-		#if(j<10): #decimal values
-			#noise=j/10.0
-			#noise=count/10.0
-			#count+=1
-		#else: # integers 1 -> 10
-		count+=1
-		noise=count
-		MSDnoise[j,0]=noise
-		x_path=force_calc_stub()
-		for N in range(200,time_steps-tau):
-			MSDnoise[j,1]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
-		MSDnoise[j,1]=MSDnoise[j,1]/(time_steps-200-tau-1)
-		print("done: " + str(noise))
-	np.save('MSDnoise' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDnoise)
-
-
-#MSD vs Eta -------------------------------- 
-	MSDeta=np.zeros((int)(etaRes))
-	for j in range((int)(etaRes)): 
-		tau=5
-		eta=j/etaRes
-		gamma=1-eta
-		x_path=force_calc_stub()
-		for N in range(200,time_steps-tau):
-			MSDeta[j]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
-		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
-		print("done: " + str(eta))
-	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-
-#MSD vs Shift -------------------------------- 
-	#This will take forever because of path calculation ... 
-	tau=5
-	MSDshift=np.zeros((int)(shiftRes))
-	for s in range(0,(int)(shiftRes)):
-		shift=s/(shiftRes-1)
-		x_obst1,y_obst1=lattice_generator()
-		x_path=force_calc_stub() 
-		np.save('traj_' + str(jobNum) + '_shift_'+ str(s) + '.npy', x_path)
-		for N in range(200,time_steps-tau):
-			MSDshift[s]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
-		MSDshift[s]=MSDshift[s]/(time_steps-200-tau-1)
-	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
-
-#MSD vs Tau (For Multiple Shifts) --------------------------------
-	for s in range(0,(int)(shiftRes)):
-		MSDtau=np.zeros(tauRes)
-		shift=(float)(s/(shiftRes-1))
-		print(shift)
-		x_obst1,y_obst1=lattice_generator()
-		x_path=force_calc_stub() 
-		for t in range(0,tauRes): 
-			tau=(t+1)*5
-			for N in range(50,time_steps-(tau)):
-				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-			MSDtau[t]=MSDtau[t]/(time_steps-50-(tau-1))
-		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
-
-#MSD vs delta Tau -------------------------------- ---> for averaging, maybe in plotting, take the outputs and merge them... (summing each MSD value)/delta tau value 
-	MSDtau=np.zeros(tauRes)
-	x_path=force_calc_stub() 
-	for t in range(0,tauRes): 
-		tau=(t+1)*2
-		for N in range(200,time_steps-(tau)):
-			MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
-		#print(MSDtau[t])
-	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
-	'''
 
 #=======================================================================
 # Method call to the vector field calculator
@@ -247,22 +148,49 @@ plt.close()
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
-#shift=0
-x_obst1,y_obst1=lattice_generator()
 for n in range(Nspinners):
+	prob_vals=np.zeros((probRes,probRes))
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
-	x_vec[0,:]=np.random.randn(2)*10 
-	xunit_vec=[1,0]
-	yunit_vec=[0,1]
+	#x_vec[0,0]=np.abs(np.random.randn(1)*3)
+	#x_vec[0,1]=np.abs(np.random.randn(1)*3)
+	x_vec[0,0]=2
+	x_vec[0,1]=2
 	for i in range(1,time_steps):
 		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
-	#path[:,:]=x_vec
-	np.save('traj_' + str(jobNum) + '_spinner_'+ str(n) + '.npy', x_vec)
-
+		#print(x_vec[i,:])
+		#if((x_vec[i,0]<5) and  (x_vec[i,0]>0) and (x_vec[i,1]<5) and (x_vec[i,1]>0)):
+		x=np.floor(np.abs(x_vec[i,0]%5)/(5/probRes))
+		y=np.floor(np.abs(x_vec[i,1]%5)/(5/probRes))
+		if(i%1000==0):
+			print(i)
+		prob_vals[x,y]+=1
+	print(prob_vals)
+	cm=plt.cm.get_cmap('rainbow')
+	plt.pcolor(prob_vals)
+	plt.savefig("prob_density_"+ str(n) + ".pdf")
+#=======================================================================
+# DRAW OUT THE TRAJECTORY IN TIME
+#=======================================================================
+for n in range(Nspinners):	
+	plt.figure(figsize=((10,10))) 
+	t=range(time_steps)
+	l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+	sc=plt.scatter(x_vec[:,0],x_vec[:,1], 
+								c=t, 
+								vmin=0, 
+								vmax=time_steps, 
+								s=30,
+								edgecolors='none',
+								cmap=cm
+								)
+plt.xlim(-50,50)
+plt.ylim(-50,50)
+plt.savefig("traj" + str(n) + ".png")
+plt.close()
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
@@ -272,14 +200,10 @@ print("Run Time : " + str(datetime.now() - startTime))
 print("omega: " + str(omega))
 print("noise: " + str(noise))
 print("Nspinners: " + str(Nspinners))
-print("MSDSpinners: " + str(MSDSpinners))
-print("etaRes: " + str(etaRes) + " eta: " + str(eta))
 print("gamma:" + str(gamma_t))
 print("timesteps: " + str(time_steps))
 print("dt: " + str(dt))
 print("Nposts: " + str(Nposts))
-print("tauRes: " + str(tauRes))
-print("shiftRes: " + str(shiftRes))
 print("Nres: " + str(Nres))
 print("Lattice_constant: " + str(lattice_constant))
 print("OTHER NOTES: " + "gamma=1-eta")
@@ -287,5 +211,3 @@ if(basis==3):
 	print("             " + "distorted")
 else:
 	print("             " + "square")
-
-
