@@ -6,6 +6,8 @@ from matplotlib import pyplot as plt
 from sys import argv
 from time import strftime
 from datetime import datetime
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 startTime = datetime.now()
 
@@ -20,7 +22,7 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=100000
+time_steps=10000
 Nspinners=1
 MSDSpinners=0
 probRes=100.0
@@ -35,7 +37,7 @@ noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
 #to be sure the path is visible afterwards
-#if(((int)(omega))==1000):
+#if(((int)(noise))==10):
 #	dt=10**-5
 
 #=======================================================================
@@ -171,6 +173,12 @@ for n in range(Nspinners):
 	print(prob_vals)
 	cm=plt.cm.get_cmap('rainbow')
 	plt.pcolor(prob_vals)
+	#fig = plt.figure()
+	#ax = fig.gca(projection='3d')
+	#X, Y = np.meshgrid(np.arange(0,100), np.arange(0,100))
+	#surf = ax.plot_surface(X, Y, prob_vals,rstride=1, cstride=1,linewidth=0, antialiased=False)
+	#ax.zaxis.set_major_locator(LinearLocator(10))
+	#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 	plt.savefig("prob_density_"+ str(n) + ".pdf")
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME

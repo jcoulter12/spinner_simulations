@@ -11,7 +11,7 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=3
+basis=2
 lattice_constant=1
 Nposts=50
 #shift=0.0
@@ -38,8 +38,8 @@ noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
 #to be sure the path is visible afterwards
-if(((int)(omega))==1000):
-	dt=10**-5
+if(((int)(noise))==10):
+	dt=10**-4
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
@@ -55,26 +55,22 @@ def lattice_generator():
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					#xsq1[k,:]=((i+shift)*a1) + ((j+shift)*b1)
-					xsq1[k,:]=((i+shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i+shift)*a1) + ((j+shift+y_shift)*b1)
 			if(i%4==1): #odd number column
 				if(j%2==0): #even number row
-					#xsq1[k,:]=((i-shift)*a1) + ((j-shift)*b1)
-					xsq1[k,:]=((i-shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i-shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row                 
-					xsq1[k,:]=(i*a1) + (j*b1)
+					xsq1[k,:]=(i*a1) + ((j+y_shift)*b1)
 			if(i%4==2): #even number column
 				if(j%2==0): #even number row
-					#xsq1[k,:]=((i+shift)*a1) + ((j-shift)*b1)
-					xsq1[k,:]=((i+shift)*a1) + ((j)*b1)
+					xsq1[k,:]=((i+shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row
-					xsq1[k,:]=(i*a1) + (j*b1)
+					xsq1[k,:]=(i*a1) + ((j+y_shift)*b1)
 			if(i%4==3): #odd number column
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					#xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)
-					xsq1[k,:]=((i-shift)*a1) + ((j)*b1)    
+					xsq1[k,:]=((i-shift)*a1) + ((j+shift+y_shift)*b1)
 			k+=1   
 	np.save('lattice_x_shift_' + str(shift) + '.npy', xsq1[:,0]*5)
 	np.save('lattice_y_shift_' + str(shift) + '.npy', xsq1[:,1]*5)
@@ -86,9 +82,13 @@ a1=np.array([1,0])*lattice_constant
 b1=np.array([0,1])*lattice_constant
 if(basis==0): #Simple cubic primitive vectors
 	shift=0
-if(basis==3): #Jahn Teller distorted created by shifting two square lattices
+	y_shift=0
+if(basis==3): #"Jahn Teller" distorted created by shifting two square lattices
 	shift=0.25
-
+	y_shift=0
+if(basis==2): 
+	shift=0
+	y_shift=0.25
 x_obst1,y_obst1=lattice_generator()
 #=======================================================================
 # The solver to run the numerical model 
@@ -134,7 +134,7 @@ def force_calc_stub():
 	#print(x_vec)
 	return x_vec
 #========================================================================
-for i in range(0,MSDSpinners):
+#for i in range(0,MSDSpinners):
 '''
 #MSD vs Noise -------------------------------- 
 	count=40
@@ -208,8 +208,7 @@ for i in range(0,MSDSpinners):
 		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		#print(MSDtau[t])
 	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
-	'''
-
+'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -260,6 +259,8 @@ for n in range(Nspinners):
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
+		#if(i%1000==0):
+			#print(i)
 	#path[:,:]=x_vec
 	np.save('traj_' + str(jobNum) + '_spinner_'+ str(n) + '.npy', x_vec)
 
@@ -285,6 +286,8 @@ print("Lattice_constant: " + str(lattice_constant))
 print("OTHER NOTES: " + "gamma=1-eta")
 if(basis==3):
 	print("             " + "distorted")
+elif(basis==2):
+	print("             " + "square distorted")
 else:
 	print("             " + "square")
 

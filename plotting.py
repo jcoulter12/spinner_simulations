@@ -7,15 +7,15 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=5
+jobNum=1
 shiftRes=101.0
 etaRes=100.0
-Nspinners=4
+Nspinners=5
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x_shift_0.25.npy')
-y_obst1=np.load('lattice_y_shift_0.25.npy')
+x_obst1=np.load('lattice_x_shift_0.npy')
+y_obst1=np.load('lattice_y_shift_0.npy')
 plt.figure(figsize=(10,10))
 p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
 #if(basis==1):
