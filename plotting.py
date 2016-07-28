@@ -7,21 +7,24 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=1
+jobNum=4
 shiftRes=101.0
 etaRes=100.0
 Nspinners=5
 #=======================================================================
 # PLOT THE LATTICE 
 #=======================================================================
-x_obst1=np.load('lattice_x_shift_0.npy')
-y_obst1=np.load('lattice_y_shift_0.npy')
+#x_obst1=np.load('lattice_x_defect.npy')
+#y_obst1=np.load('lattice_y_defect.npy')
+x_obst1=np.load('lattice_x_shift_0.25.npy')
+y_obst1=np.load('lattice_y_shift_0.25.npy')
+print(len(x_obst1))
+print(len(y_obst1))
 plt.figure(figsize=(10,10))
-p1=plt.plot(x_obst1,y_obst1,'o',markersize=15,markeredgewidth=4,color="red")
-#if(basis==1):
-	#p2=plt.plot(xsq2[:,0]*5,xsq2[:,1]*5,'o',markersize=15,markeredgewidth=4,color="blue")
-plt.xlim(-20,20)
-plt.ylim(-20,20)
+#p1=plt.plot(x_obst1,y_obst1,'o',edgecolors='none', markersize=5,markeredgewidth=4,color="red")
+l=plt.scatter(x_obst1,y_obst1,s=30,color="green",edgecolors='none')
+plt.xlim(-100,100)
+plt.ylim(-100,100)
 plt.axis('off')
 plt.savefig("lattice.pdf")
 plt.close()
@@ -144,9 +147,9 @@ for i in range (0,jobNum):
 		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
 		#            cmap=cm,
-		#            scale=10000
+		#            scale=100000
 		#            )
-		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+		l=plt.scatter(x_obst1,y_obst1,s=5,color="green")
 		sc=plt.scatter(path[:,0],path[:,1], 
 									c=t, 
 									vmin=0, 
@@ -155,8 +158,8 @@ for i in range (0,jobNum):
 									edgecolors='none',
 									cmap=cm
 									)
-	plt.xlim(-50,50)
-	plt.ylim(-50,50)
+	plt.xlim(-250,250)
+	plt.ylim(-250,250)
 	plt.savefig("traj" + str(i) + ".png")
 	plt.close()
 	

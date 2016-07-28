@@ -1,5 +1,5 @@
 import numpy as np
-#from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 #import scipy.io as sio
 #import os
 #import math
@@ -11,13 +11,15 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=2
+basis=0
 lattice_constant=1
 Nposts=50
 #shift=0.0
 tot_posts=Nposts*2*Nposts*2
+print(tot_posts)
 x_obst1=np.zeros((tot_posts)) 
 y_obst1=np.zeros((tot_posts)) 
+Ndefects=1000
 
 #TIME ----------------
 time_steps=10000
@@ -29,7 +31,7 @@ etaRes=100.0
 noiseRes=20.0
 
 #FORCE ---------------
-Nres=30
+Nres=60
 dt=10**-3
 
 script,jobNum, noise, eta, omega = argv
@@ -72,9 +74,10 @@ def lattice_generator():
 				if(j%2==1): #odd number row
 					xsq1[k,:]=((i-shift)*a1) + ((j+shift+y_shift)*b1)
 			k+=1   
-	np.save('lattice_x_shift_' + str(shift) + '.npy', xsq1[:,0]*5)
-	np.save('lattice_y_shift_' + str(shift) + '.npy', xsq1[:,1]*5)
+	np.save('lattice_x.npy', xsq1[:,0]*5)
+	np.save('lattice_y.npy', xsq1[:,1]*5)
 	return xsq1[:,0]*5, xsq1[:,1]*5
+
 #=======================================================================
 # This creates either of the two defined lattice types
 #=======================================================================
@@ -90,6 +93,26 @@ if(basis==2):
 	shift=0
 	y_shift=0.25
 x_obst1,y_obst1=lattice_generator()
+
+#=======================================================================
+# This creates defects
+#=======================================================================
+x_defects=np.random.choice(np.arange((int)(-tot_posts/2),(int)(tot_posts/2)),Ndefects)
+y_defected_obst=list()
+x_defected_obst=list()
+print(x_defects)
+for i in range((int)(-tot_posts/2),(int)(tot_posts/2)):
+	#print(x_obst1[i])
+	if i in x_defects:
+		continue
+	else:
+		x_defected_obst.append(x_obst1[i])
+		y_defected_obst.append(y_obst1[i])
+#print(y_defected_obst)
+np.save('lattice_x_defect.npy', x_defected_obst)
+np.save('lattice_y_defect.npy', y_defected_obst)
+x_obst1=x_defected_obst
+y_obst1=y_defected_obst
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================
@@ -212,7 +235,6 @@ def force_calc_stub():
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
-'''
 x_vf=np.zeros((2*Nres,2*Nres,2)) 
 for q in range(-Nres,Nres):
 	for u in range(-Nres,Nres):
@@ -221,33 +243,29 @@ f_vf=np.zeros((2*Nres,2*Nres,2))
 for i in range(-Nres,Nres): #rows
 	for j in range(-Nres,Nres): #cols
 		f_vf[i,j,0],f_vf[i,j,1]=force_calc(x_vf[i,j]/3)
-'''
 #=======================================================================
 #PLOT THE VECTOR FIELD
 #=======================================================================
-'''
 plot1=plt.figure()
 plt.figure(figsize=(10,10))
 cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 			(np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
 			cmap=cm,
-			scale=100*omega
+			scale=1000
 			)
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
-if(basis==2):
-	lattice2=plt.scatter(x_obst2,y_obst2,s=35,color="red")
 plt.title('Preliminary Vector Field Plot')
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
-plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
+plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".pdf")
 plt.close()
-'''
+
 #=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
 #shift=0
-x_obst1,y_obst1=lattice_generator()
+#x_obst1,y_obst1=lattice_generator()
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
@@ -267,7 +285,7 @@ for n in range(Nspinners):
 #=======================================================================
 #WRITE OUTPUTS 
 #=======================================================================
-
+print(len(x_obst1))
 print("jobNum: " + str(jobNum) + "==========================================================")
 print("Run Time : " + str(datetime.now() - startTime))
 print("omega: " + str(omega))

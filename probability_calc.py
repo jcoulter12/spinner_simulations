@@ -13,7 +13,7 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=0
+basis=2
 lattice_constant=1
 Nposts=50
 shift=0.0
@@ -22,7 +22,7 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=10000
+time_steps=100000
 Nspinners=1
 MSDSpinners=0
 probRes=100.0
@@ -54,26 +54,27 @@ def lattice_generator():
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					xsq1[k,:]=((i+shift)*a1) + ((j+shift)*b1)
+					xsq1[k,:]=((i+shift)*a1) + ((j+shift+y_shift)*b1)
 			if(i%4==1): #odd number column
 				if(j%2==0): #even number row
 					xsq1[k,:]=((i-shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row                 
-					xsq1[k,:]=(i*a1) + (j*b1)
+					xsq1[k,:]=(i*a1) + ((j+y_shift)*b1)
 			if(i%4==2): #even number column
 				if(j%2==0): #even number row
 					xsq1[k,:]=((i+shift)*a1) + ((j-shift)*b1)
 				if(j%2==1): #odd number row
-					xsq1[k,:]=(i*a1) + (j*b1)
+					xsq1[k,:]=(i*a1) + ((j+y_shift)*b1)
 			if(i%4==3): #odd number column
 				if(j%2==0): #even number row
 					xsq1[k,:]=(i*a1) + (j*b1)
 				if(j%2==1): #odd number row
-					xsq1[k,:]=((i-shift)*a1) + ((j+shift)*b1)  
+					xsq1[k,:]=((i-shift)*a1) + ((j+shift+y_shift)*b1)
 			k+=1   
-	np.save('lattice_x_shift_' + str(shift) + '.npy', xsq1[:,0]*5)
-	np.save('lattice_y_shift_' + str(shift) + '.npy', xsq1[:,1]*5)
+	np.save('lattice_x.npy', xsq1[:,0]*5)
+	np.save('lattice_y.npy', xsq1[:,1]*5)
 	return xsq1[:,0]*5, xsq1[:,1]*5
+
 #=======================================================================
 # This creates either of the two defined lattice types
 #=======================================================================
@@ -81,10 +82,15 @@ a1=np.array([1,0])*lattice_constant
 b1=np.array([0,1])*lattice_constant
 if(basis==0): #Simple cubic primitive vectors
 	shift=0
-if(basis==3): #Jahn Teller distorted created by shifting two square lattices
+	y_shift=0
+if(basis==3): #"Jahn Teller" distorted created by shifting two square lattices
 	shift=0.25
-
+	y_shift=0
+if(basis==2): 
+	shift=0
+	y_shift=0.25
 x_obst1,y_obst1=lattice_generator()
+
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================
