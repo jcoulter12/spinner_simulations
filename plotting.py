@@ -7,7 +7,7 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=4
+jobNum=1
 shiftRes=101.0
 etaRes=100.0
 Nspinners=5
@@ -16,8 +16,10 @@ Nspinners=5
 #=======================================================================
 #x_obst1=np.load('lattice_x_defect.npy')
 #y_obst1=np.load('lattice_y_defect.npy')
-x_obst1=np.load('lattice_x_shift_0.25.npy')
-y_obst1=np.load('lattice_y_shift_0.25.npy')
+x_obst1=np.load('lattice_x.npy')
+y_obst1=np.load('lattice_y.npy')
+#x_obst1=np.load('lattice_x_shift_0.npy')
+#y_obst1=np.load('lattice_y_shift_0.npy')
 print(len(x_obst1))
 print(len(y_obst1))
 plt.figure(figsize=(10,10))
@@ -134,32 +136,26 @@ for i in range (0,jobNum):
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-	#time_steps=len(np.load('traj_0_shift_0.npy'))
-	time_steps=len(np.load('traj_0_spinner_0.npy'))
-	#plt.title("")
-	plt.figure(figsize=((10,10))) 
+	inset=True
+	if(inset):	
+		plt.figure(figsize=((10,2))) 
+		plt.xlim(-100,100)
+		plt.ylim(-20,20)
+	else:
+		plt.figure(figsize=((10,10))) 
+		plt.xlim(-50,50)
+		plt.ylim(-50,50)
 	cm=plt.cm.get_cmap('rainbow')
-	t=range(time_steps)
 	for n in range(0,Nspinners): # load in all the paths
 		path=np.load("traj_" + str(i) + "_spinner_" + str(n) + ".npy")
-		#print(path)
-		#path=np.load('traj_' + str(i) + '_spinner_' + str(n) + '.npy') 
-		#plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
-		#            (np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
-		#            cmap=cm,
-		#            scale=100000
-		#            )
-		l=plt.scatter(x_obst1,y_obst1,s=5,color="green")
-		sc=plt.scatter(path[:,0],path[:,1], 
-									c=t, 
-									vmin=0, 
-									vmax=time_steps, 
-									s=30,
-									edgecolors='none',
-									cmap=cm
-									)
-	plt.xlim(-250,250)
-	plt.ylim(-250,250)
+		time_steps=len(path)
+		t=np.arange(time_steps)
+		if(inset):
+			l=plt.scatter(x_obst1,y_obst1,s=2,color="green")
+			sc=plt.scatter(path[:,0],path[:,1], c=t, vmin=0, vmax=time_steps, s=5, edgecolors='none', cmap=cm )
+		else:
+			l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+			sc=plt.scatter(path[:,0],path[:,1],  c=t, vmin=0, vmax=time_steps, s=35, edgecolors='none', cmap=cm )
 	plt.savefig("traj" + str(i) + ".png")
 	plt.close()
 	

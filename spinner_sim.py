@@ -1,8 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-#import scipy.io as sio
-#import os
-#import math
 from sys import argv
 from time import strftime
 from datetime import datetime
@@ -19,11 +16,11 @@ tot_posts=Nposts*2*Nposts*2
 print(tot_posts)
 x_obst1=np.zeros((tot_posts)) 
 y_obst1=np.zeros((tot_posts)) 
-Ndefects=1000
+Ndefects=0
 
 #TIME ----------------
 time_steps=10000
-Nspinners=5
+Nspinners=0
 MSDSpinners=0
 tauRes=50
 shiftRes=101.0
@@ -31,7 +28,7 @@ etaRes=100.0
 noiseRes=20.0
 
 #FORCE ---------------
-Nres=60
+Nres=50
 dt=10**-3
 
 script,jobNum, noise, eta, omega = argv
@@ -39,9 +36,6 @@ eta=float(eta)
 noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
-#to be sure the path is visible afterwards
-if(((int)(noise))==10):
-	dt=10**-4
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
@@ -97,22 +91,23 @@ x_obst1,y_obst1=lattice_generator()
 #=======================================================================
 # This creates defects
 #=======================================================================
-x_defects=np.random.choice(np.arange((int)(-tot_posts/2),(int)(tot_posts/2)),Ndefects)
-y_defected_obst=list()
-x_defected_obst=list()
-print(x_defects)
-for i in range((int)(-tot_posts/2),(int)(tot_posts/2)):
-	#print(x_obst1[i])
-	if i in x_defects:
-		continue
-	else:
-		x_defected_obst.append(x_obst1[i])
-		y_defected_obst.append(y_obst1[i])
-#print(y_defected_obst)
-np.save('lattice_x_defect.npy', x_defected_obst)
-np.save('lattice_y_defect.npy', y_defected_obst)
-x_obst1=x_defected_obst
-y_obst1=y_defected_obst
+if(Ndefects>0):
+	x_defects=np.random.choice(np.arange((int)(-tot_posts/2),(int)(tot_posts/2)),Ndefects)
+	y_defected_obst=list()
+	x_defected_obst=list()
+	#print(x_defects)
+	for i in range((int)(-tot_posts/2),(int)(tot_posts/2)):
+		#print(x_obst1[i])
+		if i in x_defects:
+			continue
+		else:
+			x_defected_obst.append(x_obst1[i])
+			y_defected_obst.append(y_obst1[i])
+	#print(y_defected_obst)
+	np.save('lattice_x_defect.npy', x_defected_obst)
+	np.save('lattice_y_defect.npy', y_defected_obst)
+	x_obst1=x_defected_obst
+	y_obst1=y_defected_obst
 #=======================================================================
 # The solver to run the numerical model 
 #=======================================================================
@@ -252,13 +247,13 @@ cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 			(np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
 			cmap=cm,
-			scale=1000
+			scale=15000
 			)
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
-plt.title('Preliminary Vector Field Plot')
+#plt.title('Preliminary Vector Field Plot')
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
-plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".pdf")
+plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".png")
 plt.close()
 
 #=======================================================================
@@ -277,8 +272,8 @@ for n in range(Nspinners):
 		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
-		#if(i%1000==0):
-			#print(i)
+		if(i%1000==0):
+			print(i)
 	#path[:,:]=x_vec
 	np.save('traj_' + str(jobNum) + '_spinner_'+ str(n) + '.npy', x_vec)
 
