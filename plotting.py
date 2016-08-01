@@ -7,7 +7,7 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=1
+jobNum=4
 shiftRes=101.0
 etaRes=100.0
 Nspinners=5
@@ -16,10 +16,10 @@ Nspinners=5
 #=======================================================================
 #x_obst1=np.load('lattice_x_defect.npy')
 #y_obst1=np.load('lattice_y_defect.npy')
-x_obst1=np.load('lattice_x.npy')
-y_obst1=np.load('lattice_y.npy')
-#x_obst1=np.load('lattice_x_shift_0.npy')
-#y_obst1=np.load('lattice_y_shift_0.npy')
+#x_obst1=np.load('lattice_x.npy')
+#y_obst1=np.load('lattice_y.npy')
+x_obst1=np.load('lattice_x_shift_0.npy')
+y_obst1=np.load('lattice_y_shift_0.npy')
 print(len(x_obst1))
 print(len(y_obst1))
 plt.figure(figsize=(10,10))
@@ -139,8 +139,11 @@ for i in range (0,jobNum):
 	inset=True
 	if(inset):	
 		plt.figure(figsize=((10,2))) 
-		plt.xlim(-100,100)
-		plt.ylim(-20,20)
+		plt.xlim(-120,120)
+		plt.ylim(-24,24)
+		#plt.figure(figsize=((10,2))) 
+		#plt.xlim(-260,260)
+		#plt.ylim(-52,52)
 	else:
 		plt.figure(figsize=((10,10))) 
 		plt.xlim(-50,50)

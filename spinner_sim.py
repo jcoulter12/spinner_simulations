@@ -8,41 +8,41 @@ startTime = datetime.now()
 
 #Define the parameters =================================================
 #LATTICE -------------
-basis=0
-lattice_constant=1
-Nposts=50
-#shift=0.0
+basis=3 #selecting the lattice type 0) square 1) random 2) yshift 3) xyshift
+lattice_constant=1 #spacing between the posts
+Nposts=50 # number of posts along one side 
 tot_posts=Nposts*2*Nposts*2
-print(tot_posts)
-x_obst1=np.zeros((tot_posts)) 
+x_obst1=np.zeros((tot_posts)) #x and y coordinates for passive particles
 y_obst1=np.zeros((tot_posts)) 
-Ndefects=0
+Ndefects=0 # number of defects you want in the lattice 
 
 #TIME ----------------
-time_steps=10000
-Nspinners=0
-MSDSpinners=0
-tauRes=50
+time_steps=5000 # number of time units
+dt=10**-3  
+Nspinners=0 # number of individual trajectories to run  
+
+#MSD ---------------- 
+MSDSpinners=3
+tauRes=50 # Number of delta tau slices plotted
 shiftRes=101.0
 etaRes=100.0
-noiseRes=20.0
+noiseRes=30.0
 
 #FORCE ---------------
-Nres=50
-dt=10**-3
+Nres=50 # density of points plotted in vector field
 
+#ARGUMENTS -----------
 script,jobNum, noise, eta, omega = argv
-eta=float(eta)
-noise=float(noise)
-gamma_t=1-eta
-omega=float(omega)
+eta=float(eta) # rotational component of the field
+noise=float(noise) # noise scale 
+gamma_t=1-eta	# radial component of the field 
+omega=float(omega) # magnitude of the hydrodynamic force 
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
 #=======================================================================
 def lattice_generator():
 	xsq1=np.zeros((tot_posts,2)) 
-	xsq2=np.zeros((tot_posts,2)) 
 	k=0 
 	# if shift is 0, it reduces to a typical square lattice
 	for i in range(-Nposts,Nposts): 
@@ -73,43 +73,40 @@ def lattice_generator():
 	return xsq1[:,0]*5, xsq1[:,1]*5
 
 #=======================================================================
-# This creates either of the two defined lattice types
+# This creates either of the defined lattice types
 #=======================================================================
 a1=np.array([1,0])*lattice_constant
 b1=np.array([0,1])*lattice_constant
 if(basis==0): #Simple cubic primitive vectors
 	shift=0
-	y_shift=0
+	y_shift=0	
 if(basis==3): #"Jahn Teller" distorted created by shifting two square lattices
 	shift=0.25
 	y_shift=0
-if(basis==2): 
+if(basis==2): # yshift lattice 
 	shift=0
 	y_shift=0.25
 x_obst1,y_obst1=lattice_generator()
 
 #=======================================================================
-# This creates defects
+# This creates defects in the lattice
 #=======================================================================
 if(Ndefects>0):
 	x_defects=np.random.choice(np.arange((int)(-tot_posts/2),(int)(tot_posts/2)),Ndefects)
 	y_defected_obst=list()
 	x_defected_obst=list()
-	#print(x_defects)
 	for i in range((int)(-tot_posts/2),(int)(tot_posts/2)):
-		#print(x_obst1[i])
 		if i in x_defects:
 			continue
 		else:
 			x_defected_obst.append(x_obst1[i])
 			y_defected_obst.append(y_obst1[i])
-	#print(y_defected_obst)
 	np.save('lattice_x_defect.npy', x_defected_obst)
 	np.save('lattice_y_defect.npy', y_defected_obst)
 	x_obst1=x_defected_obst
 	y_obst1=y_defected_obst
 #=======================================================================
-# The solver to run the numerical model 
+# Calculates force based on vecx (position on the lattice) 
 #=======================================================================
 def force_calc(vecx): 
 	r_cube1=np.sqrt((vecx[0]-x_obst1)**2+(vecx[1]-y_obst1)**2)
@@ -117,7 +114,7 @@ def force_calc(vecx):
 	xm1=omega*(gamma_t*(vecx[0]-x_obst1)-eta*(vecx[1]-y_obst1)) 
 	ym1=omega*(gamma_t*(vecx[1]-y_obst1)+eta*(vecx[0]-x_obst1)) 
 	r=np.zeros((len(r_cube1),2))
-	#divide the force up by region
+	#divide the force up by region ----------------------------
 	for i in range(len(r_cube1)):
 		if(r_cube1[i]<1): #it's close to the post
 			if(r_cube1[i]==0):
@@ -153,19 +150,19 @@ def force_calc_stub():
 	return x_vec
 #========================================================================
 #for i in range(0,MSDSpinners):
-'''
+
 #MSD vs Noise -------------------------------- 
-	count=40
+	count=0
 	MSDnoise=np.zeros(((int)(noiseRes),2))
 	for j in range((int)(noiseRes)): 
-		tau=5
+		tau=3
 		#if(j<10): #decimal values
-			#noise=j/10.0
+		noise=j/10.0
 			#noise=count/10.0
 			#count+=1
 		#else: # integers 1 -> 10
-		count+=1
-		noise=count
+		#count+=1
+		#noise=count
 		MSDnoise[j,0]=noise
 		x_path=force_calc_stub()
 		for N in range(200,time_steps-tau):
@@ -173,8 +170,7 @@ def force_calc_stub():
 		MSDnoise[j,1]=MSDnoise[j,1]/(time_steps-200-tau-1)
 		print("done: " + str(noise))
 	np.save('MSDnoise' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDnoise)
-
-
+'''
 #MSD vs Eta -------------------------------- 
 	MSDeta=np.zeros((int)(etaRes))
 	for j in range((int)(etaRes)): 
@@ -216,7 +212,7 @@ def force_calc_stub():
 			MSDtau[t]=MSDtau[t]/(time_steps-50-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
 
-#MSD vs delta Tau -------------------------------- ---> for averaging, maybe in plotting, take the outputs and merge them... (summing each MSD value)/delta tau value 
+#MSD vs delta Tau -------------------------------- 
 	MSDtau=np.zeros(tauRes)
 	x_path=force_calc_stub() 
 	for t in range(0,tauRes): 
@@ -226,12 +222,12 @@ def force_calc_stub():
 		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		#print(MSDtau[t])
 	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
-'''
+
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
 x_vf=np.zeros((2*Nres,2*Nres,2)) 
-for q in range(-Nres,Nres):
+for q in range(-Nres,Nres): # fills a lattice with x, y 
 	for u in range(-Nres,Nres):
 		x_vf[q,u]=q,u
 f_vf=np.zeros((2*Nres,2*Nres,2))
@@ -241,7 +237,7 @@ for i in range(-Nres,Nres): #rows
 #=======================================================================
 #PLOT THE VECTOR FIELD
 #=======================================================================
-plot1=plt.figure()
+plot=plt.figure()
 plt.figure(figsize=(10,10))
 cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
@@ -250,31 +246,27 @@ plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],
 			scale=15000
 			)
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
-#plt.title('Preliminary Vector Field Plot')
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".png")
 plt.close()
-
+'''
 #=======================================================================
-# CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
+# Calculate a trajectory for a spinner
 #=======================================================================
 #shift=0
 #x_obst1,y_obst1=lattice_generator()
 for n in range(Nspinners):
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
-	x_vec[0,:]=np.random.randn(2)*10 
-	xunit_vec=[1,0]
-	yunit_vec=[0,1]
+	x_vec[0,:]=np.random.randn(2)*10 #starting position
 	for i in range(1,time_steps):
 		x_vec[i,:]=x_vec[i-1,:]+f_vec[i-1,:]*(dt)
-		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn()
+		x_vec[i,0]+=np.sqrt(dt)*noise*np.random.randn() # **************************** ASK WHY
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
 		if(i%1000==0):
 			print(i)
-	#path[:,:]=x_vec
 	np.save('traj_' + str(jobNum) + '_spinner_'+ str(n) + '.npy', x_vec)
 
 #=======================================================================
