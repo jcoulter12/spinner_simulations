@@ -7,7 +7,7 @@ from sys import argv
 from time import strftime
 import matplotlib.cm as cm
 
-jobNum=4
+jobNum=1
 shiftRes=101.0
 etaRes=100.0
 Nspinners=5
@@ -16,10 +16,10 @@ Nspinners=5
 #=======================================================================
 #x_obst1=np.load('lattice_x_defect.npy')
 #y_obst1=np.load('lattice_y_defect.npy')
-#x_obst1=np.load('lattice_x.npy')
-#y_obst1=np.load('lattice_y.npy')
-x_obst1=np.load('lattice_x_shift_0.npy')
-y_obst1=np.load('lattice_y_shift_0.npy')
+x_obst1=np.load('lattice_x.npy')
+y_obst1=np.load('lattice_y.npy')
+#x_obst1=np.load('lattice_x_shift_0.npy')
+#y_obst1=np.load('lattice_y_shift_0.npy')
 print(len(x_obst1))
 print(len(y_obst1))
 plt.figure(figsize=(10,10))
@@ -126,40 +126,43 @@ for i in range (0,jobNum):
 #=======================================================================
 # MSD vs Noise
 #=======================================================================
-	# MSDnoise=np.load('MSDnoise0spinner_0.npy')
-	# plt.scatter(MSDnoise[:,0], MSDnoise[:,1])
-	# plt.title('MSD vs Noise for 20 values of noise, 0.0 -> 1, timesteps=10000, dt = 0.001')
-	# plt.ylabel('MSD')
-	# plt.xlabel('Noise')
-	# plt.savefig("MSDnoise_"+ str(i) + ".pdf")
-	# plt.close()
+	colors = ['r','g','b','y','orange']
+	MSDnoise=np.zeros((len(np.load('MSDnoise0spinner_0.npy')),2))
+	for n in range(0,Nspinners):
+		MSDnoise+=np.load('MSDnoise0spinner_' + str(n) + '.npy')
+	plt.scatter(MSDnoise[:,0]/5.0, MSDnoise[:,1]/5.0,color=colors[n])
+	plt.title('MSD vs Noise for 30 values of noise, 0.0 -> 1, timesteps=5000, dt = 0.001')
+	plt.ylabel('MSD')
+	plt.xlabel('Noise')
+	plt.savefig("MSDnoise_"+ str(i) + ".pdf")
+	plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
-	inset=True
-	if(inset):	
-		plt.figure(figsize=((10,2))) 
-		plt.xlim(-120,120)
-		plt.ylim(-24,24)
-		#plt.figure(figsize=((10,2))) 
-		#plt.xlim(-260,260)
-		#plt.ylim(-52,52)
-	else:
-		plt.figure(figsize=((10,10))) 
-		plt.xlim(-50,50)
-		plt.ylim(-50,50)
-	cm=plt.cm.get_cmap('rainbow')
-	for n in range(0,Nspinners): # load in all the paths
-		path=np.load("traj_" + str(i) + "_spinner_" + str(n) + ".npy")
-		time_steps=len(path)
-		t=np.arange(time_steps)
-		if(inset):
-			l=plt.scatter(x_obst1,y_obst1,s=2,color="green")
-			sc=plt.scatter(path[:,0],path[:,1], c=t, vmin=0, vmax=time_steps, s=5, edgecolors='none', cmap=cm )
-		else:
-			l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
-			sc=plt.scatter(path[:,0],path[:,1],  c=t, vmin=0, vmax=time_steps, s=35, edgecolors='none', cmap=cm )
-	plt.savefig("traj" + str(i) + ".png")
-	plt.close()
+	# inset=True
+	# if(inset):	
+	# 	plt.figure(figsize=((10,2))) 
+	# 	plt.xlim(-120,120)
+	# 	plt.ylim(-24,24)
+	# 	#plt.figure(figsize=((10,2))) 
+	# 	#plt.xlim(-260,260)
+	# 	#plt.ylim(-52,52)
+	# else:
+	# 	plt.figure(figsize=((10,10))) 
+	# 	plt.xlim(-50,50)
+	# 	plt.ylim(-50,50)
+	# cm=plt.cm.get_cmap('rainbow')
+	# for n in range(0,Nspinners): # load in all the paths
+	# 	path=np.load("traj_" + str(i) + "_spinner_" + str(n) + ".npy")
+	# 	time_steps=len(path)
+	# 	t=np.arange(time_steps)
+	# 	if(inset):
+	# 		l=plt.scatter(x_obst1,y_obst1,s=2,color="green")
+	# 		sc=plt.scatter(path[:,0],path[:,1], c=t, vmin=0, vmax=time_steps, s=5, edgecolors='none', cmap=cm )
+	# 	else:
+	# 		l=plt.scatter(x_obst1,y_obst1,s=30,color="green")
+	# 		sc=plt.scatter(path[:,0],path[:,1],  c=t, vmin=0, vmax=time_steps, s=35, edgecolors='none', cmap=cm )
+	# plt.savefig("traj" + str(i) + ".png")
+	# plt.close()
 	
 print("done!")

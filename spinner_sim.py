@@ -22,14 +22,14 @@ dt=10**-3
 Nspinners=0 # number of individual trajectories to run  
 
 #MSD ---------------- 
-MSDSpinners=3
+MSDSpinners=10
 tauRes=50 # Number of delta tau slices plotted
-shiftRes=101.0
+shiftRes=100.0
 etaRes=100.0
 noiseRes=30.0
 
 #FORCE ---------------
-Nres=50 # density of points plotted in vector field
+Nres=20 # density of points plotted in vector field
 
 #ARGUMENTS -----------
 script,jobNum, noise, eta, omega = argv
@@ -149,8 +149,9 @@ def force_calc_stub():
 	#print(x_vec)
 	return x_vec
 #========================================================================
-#for i in range(0,MSDSpinners):
 
+for i in range(0,MSDSpinners):
+'''
 #MSD vs Noise -------------------------------- 
 	count=0
 	MSDnoise=np.zeros(((int)(noiseRes),2))
@@ -170,7 +171,7 @@ def force_calc_stub():
 		MSDnoise[j,1]=MSDnoise[j,1]/(time_steps-200-tau-1)
 		print("done: " + str(noise))
 	np.save('MSDnoise' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDnoise)
-'''
+
 #MSD vs Eta -------------------------------- 
 	MSDeta=np.zeros((int)(etaRes))
 	for j in range((int)(etaRes)): 
@@ -183,13 +184,13 @@ def force_calc_stub():
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
 		print("done: " + str(eta))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-
+'''
 #MSD vs Shift -------------------------------- 
-	#This will take forever because of path calculation ... 
-	tau=5
+	tau=3
 	MSDshift=np.zeros((int)(shiftRes))
-	for s in range(0,(int)(shiftRes)):
-		shift=s/(shiftRes-1)
+	for s in range((int)(shiftRes)):
+		shift=s/(shiftRes)
+		print(shift)
 		x_obst1,y_obst1=lattice_generator()
 		x_path=force_calc_stub() 
 		np.save('traj_' + str(jobNum) + '_shift_'+ str(s) + '.npy', x_path)
@@ -197,9 +198,9 @@ def force_calc_stub():
 			MSDshift[s]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
 		MSDshift[s]=MSDshift[s]/(time_steps-200-tau-1)
 	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
-
+'''
 #MSD vs Tau (For Multiple Shifts) --------------------------------
-	for s in range(0,(int)(shiftRes)):
+	for s in range((int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
 		shift=(float)(s/(shiftRes-1))
 		print(shift)
@@ -207,9 +208,9 @@ def force_calc_stub():
 		x_path=force_calc_stub() 
 		for t in range(0,tauRes): 
 			tau=(t+1)*5
-			for N in range(50,time_steps-(tau)):
+			for N in range(200,time_steps-(tau)):
 				MSDtau[t]+=(np.sqrt((x_path[0,N,0])**2+(x_path[0,N,1])**2) - np.sqrt((x_path[0,N+tau,0])**2 + (x_path[0,N+tau,1])**2))**2
-			MSDtau[t]=MSDtau[t]/(time_steps-50-(tau-1))
+			MSDtau[t]=MSDtau[t]/(time_steps-200-(tau-1))
 		np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + "_shift_" + str(shift) + '.npy', MSDtau)
 
 #MSD vs delta Tau -------------------------------- 
@@ -222,7 +223,7 @@ def force_calc_stub():
 		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		#print(MSDtau[t])
 	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
-
+'''
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -243,14 +244,14 @@ cm = plt.cm.get_cmap('rainbow')
 plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
 			(np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
 			cmap=cm,
-			scale=15000
+			scale=1500
 			)
 lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
 plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".png")
 plt.close()
-'''
+
 #=======================================================================
 # Calculate a trajectory for a spinner
 #=======================================================================
@@ -285,6 +286,7 @@ print("timesteps: " + str(time_steps))
 print("dt: " + str(dt))
 print("Nposts: " + str(Nposts))
 print("tauRes: " + str(tauRes))
+print("tau: " + str(tau))
 print("shiftRes: " + str(shiftRes))
 print("Nres: " + str(Nres))
 print("Lattice_constant: " + str(lattice_constant))
