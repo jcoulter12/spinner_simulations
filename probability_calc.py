@@ -22,7 +22,7 @@ x_obst1=np.zeros((tot_posts))
 y_obst1=np.zeros((tot_posts)) 
 
 #TIME ----------------
-time_steps=100000
+time_steps=10000
 Nspinners=1
 MSDSpinners=0
 probRes=100.0
@@ -36,9 +36,6 @@ eta=float(eta)
 noise=float(noise)
 gamma_t=1-eta
 omega=float(omega)
-#to be sure the path is visible afterwards
-#if(((int)(noise))==10):
-#	dt=10**-5
 
 #=======================================================================
 # Defines the passive particle obstacles for a give array and shift value
@@ -120,44 +117,13 @@ def force_calc(vecx):
 	return Fx,Fy
 
 #=======================================================================
-# Method call to the vector field calculator
-#=======================================================================
-'''
-x_vf=np.zeros((2*Nres,2*Nres,2)) 
-for q in range(-Nres,Nres):
-	for u in range(-Nres,Nres):
-		x_vf[q,u]=q,u
-f_vf=np.zeros((2*Nres,2*Nres,2))
-for i in range(-Nres,Nres): #rows
-	for j in range(-Nres,Nres): #cols
-		f_vf[i,j,0],f_vf[i,j,1]=force_calc(x_vf[i,j]/3)
-'''
-#=======================================================================
-#PLOT THE VECTOR FIELD
-#=======================================================================
-'''
-plot1=plt.figure()
-plt.figure(figsize=(10,10))
-cm = plt.cm.get_cmap('rainbow')
-plt.quiver(x_vf[:,:,0]/3, x_vf[:,:,1]/3, f_vf[:,:,0], f_vf[:,:,1],      
-			(np.sqrt(f_vf[:,:,0]**2+f_vf[:,:,1]**2)),                  
-			cmap=cm,
-			scale=100*omega
-			)
-lattice1=plt.scatter(x_obst1,y_obst1,s=35,color="blue")
-if(basis==2):
-	lattice2=plt.scatter(x_obst2,y_obst2,s=35,color="red")
-plt.title('Preliminary Vector Field Plot')
-plt.xlim(-Nres/3,Nres/3)
-plt.ylim(-Nres/3,Nres/3)
-plt.savefig("vector_field"+"_eta" + str(eta)+".pdf")
-plt.close()
-'''
-#=======================================================================
 # CALL TO RUN THE NUMERICAL MODEL FOR TRAJECTORY
 #=======================================================================
 for n in range(Nspinners):
-	prob_vals=np.zeros((probRes,probRes))
+	if(basis==0):
+		prob_vals=np.zeros((probRes,probRes))
+	if(basis==2):
+		prob_vals=np.zeros((2*probRes,probRes))
 	x_vec=np.zeros((time_steps,2))
 	f_vec=np.zeros((time_steps,2))
 	#x_vec[0,0]=np.abs(np.random.randn(1)*3)
@@ -170,22 +136,22 @@ for n in range(Nspinners):
 		x_vec[i,1]+=np.sqrt(dt)*noise*np.random.randn()
 		f_vec[i,0],f_vec[i,1]=force_calc(x_vec[i,:]) 
 		#print(x_vec[i,:])
-		#if((x_vec[i,0]<5) and  (x_vec[i,0]>0) and (x_vec[i,1]<5) and (x_vec[i,1]>0)):
-		x=np.floor(np.abs(x_vec[i,0]%5)/(5/probRes))
-		y=np.floor(np.abs(x_vec[i,1]%5)/(5/probRes))
+		if(basis==0):
+			x=np.floor(np.abs(x_vec[i,0]%5)/(5/probRes))
+			y=np.floor(np.abs(x_vec[i,1]%5)/(5/probRes))
+		if(basis==2):
+			x=np.floor(np.abs(x_vec[i,0]%5)/(5/probRes))
+			y=np.floor(np.abs(x_vec[i,1]%10)/(5/(probRes)))
 		if(i%1000==0):
 			print(i)
-		prob_vals[x,y]+=1
+		prob_vals[y,x]+=1
+		#print("x: " + str(x) + ', ' + str(x_vec[i,1])+ ', y: ' + str(y) + ', ' + str(x_vec[i,1]))
 	print(prob_vals)
-	cm=plt.cm.get_cmap('rainbow')
+	plt.figure(figsize=((10,20))) 
 	plt.pcolor(prob_vals)
-	#fig = plt.figure()
-	#ax = fig.gca(projection='3d')
-	#X, Y = np.meshgrid(np.arange(0,100), np.arange(0,100))
-	#surf = ax.plot_surface(X, Y, prob_vals,rstride=1, cstride=1,linewidth=0, antialiased=False)
-	#ax.zaxis.set_major_locator(LinearLocator(10))
-	#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+	cm=plt.cm.get_cmap('rainbow')
 	plt.savefig("prob_density_"+ str(n) + ".pdf")
+	plt.close()
 #=======================================================================
 # DRAW OUT THE TRAJECTORY IN TIME
 #=======================================================================
@@ -201,8 +167,8 @@ for n in range(Nspinners):
 								edgecolors='none',
 								cmap=cm
 								)
-plt.xlim(-50,50)
-plt.ylim(-50,50)
+plt.xlim(-100,100)
+plt.ylim(-100,100)
 plt.savefig("traj" + str(n) + ".png")
 plt.close()
 #=======================================================================

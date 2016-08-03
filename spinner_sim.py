@@ -17,12 +17,12 @@ y_obst1=np.zeros((tot_posts))
 Ndefects=0 # number of defects you want in the lattice 
 
 #TIME ----------------
-time_steps=5000 # number of time units
+time_steps=10000 # number of time units
 dt=10**-3  
-Nspinners=0 # number of individual trajectories to run  
+Nspinners=5 # number of individual trajectories to run  
 
 #MSD ---------------- 
-MSDSpinners=10
+MSDSpinners=0
 tauRes=50 # Number of delta tau slices plotted
 shiftRes=100.0
 etaRes=100.0
@@ -149,9 +149,9 @@ def force_calc_stub():
 	#print(x_vec)
 	return x_vec
 #========================================================================
-
-for i in range(0,MSDSpinners):
 '''
+for i in range(0,MSDSpinners):
+
 #MSD vs Noise -------------------------------- 
 	count=0
 	MSDnoise=np.zeros(((int)(noiseRes),2))
@@ -184,7 +184,7 @@ for i in range(0,MSDSpinners):
 		MSDeta[j]=MSDeta[j]/(time_steps-200-tau-1)
 		print("done: " + str(eta))
 	np.save('MSDeta' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDeta)
-'''
+
 #MSD vs Shift -------------------------------- 
 	tau=3
 	MSDshift=np.zeros((int)(shiftRes))
@@ -198,7 +198,6 @@ for i in range(0,MSDSpinners):
 			MSDshift[s]+=(np.sqrt((x_path[N,0])**2+(x_path[N,1])**2) - np.sqrt((x_path[N+tau,0])**2 + (x_path[N+tau,1])**2))**2
 		MSDshift[s]=MSDshift[s]/(time_steps-200-tau-1)
 	np.save('MSDshift_' + str(jobNum) + '_spinner_' + str(i) + '.npy', MSDshift) 
-'''
 #MSD vs Tau (For Multiple Shifts) --------------------------------
 	for s in range((int)(shiftRes)):
 		MSDtau=np.zeros(tauRes)
@@ -223,7 +222,7 @@ for i in range(0,MSDSpinners):
 		MSDtau[t]=MSDtau[t]/(time_steps-100-(tau-1))
 		#print(MSDtau[t])
 	np.save('MSDtau_' + str(jobNum) + 'spinner_' + str(i) + '.npy', MSDtau)
-'''
+
 #=======================================================================
 # Method call to the vector field calculator
 #=======================================================================
@@ -251,7 +250,7 @@ plt.xlim(-Nres/3,Nres/3)
 plt.ylim(-Nres/3,Nres/3)
 plt.savefig("vector_field_" + "basis_" + str(basis) + "_eta_" + str(eta)+".png")
 plt.close()
-
+'''
 #=======================================================================
 # Calculate a trajectory for a spinner
 #=======================================================================
